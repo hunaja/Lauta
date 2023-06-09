@@ -35,16 +35,21 @@ export const initializeFiles = async () => {
             await client.makeBucket(fullName);
         }
 
-        return client.setBucketPolicy(fullName, JSON.stringify({
-            Version: "2012-10-17",
-            Statement: [{
-                // Disallow direct access to files
-                Effect: name === "files" ? "Deny" : "Allow",
-                Principal: { AWS: ["*"] },
-                Action: ["s3:GetObject"],
-                Resource: [`arn:aws:s3:::${fullName}/*`],
-            }],
-        }));
+        return client.setBucketPolicy(
+            fullName,
+            JSON.stringify({
+                Version: "2012-10-17",
+                Statement: [
+                    {
+                        // Disallow direct access to files
+                        Effect: name === "files" ? "Deny" : "Allow",
+                        Principal: { AWS: ["*"] },
+                        Action: ["s3:GetObject"],
+                        Resource: [`arn:aws:s3:::${fullName}/*`],
+                    },
+                ],
+            })
+        );
     });
     return Promise.all(promises);
 };
@@ -66,7 +71,9 @@ export const uploadFile = async (post, file, opPost = false) => {
         .resize(165, 125)
         .toFormat("png")
         .toBuffer();
-    uploadPromises.push(client.putObject(buckets.thumbnails, `${post._id}.png`, thumbnailBuffer));
+    uploadPromises.push(
+        client.putObject(buckets.thumbnails, `${post._id}.png`, thumbnailBuffer)
+    );
 
     // Creating an another, bigger thumbnail for the post (if it starts a thread)
     if (opPost) {
@@ -74,7 +81,13 @@ export const uploadFile = async (post, file, opPost = false) => {
             .resize(295, 295)
             .toFormat("png")
             .toBuffer();
-        uploadPromises.push(client.putObject(buckets.opthumbnails, `${post._id}.png`, opThumbnailBuffer));
+        uploadPromises.push(
+            client.putObject(
+                buckets.opthumbnails,
+                `${post._id}.png`,
+                opThumbnailBuffer
+            )
+        );
     }
 
     await Promise.all(uploadPromises);
@@ -87,9 +100,13 @@ export const deleteFile = async (post, opPost = false) => {
         client.removeObject(buckets.thumbnails, `${post._id}.png`),
     ];
 
-    if (opPost) deletePromises.push(client.removeObject(buckets.opthumbnails, `${post._id}.png`));
+    if (opPost)
+        deletePromises.push(
+            client.removeObject(buckets.opthumbnails, `${post._id}.png`)
+        );
 
     await Promise.all(deletePromises);
 };
 
-export const getFileBuffer = async (post) => client.getObject(buckets.files, post.file.location);
+export const getFileBuffer = async (post) =>
+    client.getObject(buckets.files, post.file.location);

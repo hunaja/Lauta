@@ -83,7 +83,6 @@ export interface ImageboardConfig {
 
 export interface ImagePreview {
     id: string;
-    /** Date resorvable */
     sentAt: string;
     name: string;
     postNumber: string;
@@ -111,7 +110,10 @@ export interface ThreadsSlice {
     loadPreviews: (board: Board, pageNumber?: number) => Promise<void>;
     refreshPreviews: (board: Board) => void;
     createThread: (board: Board, threadForm: ThreadForm) => Promise<Thread>;
-    fetchThreadByNumber: (board: Board, threadNumber: number) => Promise<Thread>;
+    fetchThreadByNumber: (
+        board: Board,
+        threadNumber: number
+    ) => Promise<Thread>;
     replyThread: (thread: Thread, postForm: PostForm) => Promise<void>;
     loadThreadWithPost: (postNumber: number) => Promise<void>;
     deletePost: (thread: Thread, post: Post) => Promise<void>;
@@ -134,4 +136,8 @@ export interface UsersSlice {
     deleteUser: (id: string) => Promise<void>;
 }
 
-export type Store = ImageboardSlice & BoardsSlice & ThreadsSlice & AuthSlice & UsersSlice;
+export type Store = ImageboardSlice &
+    BoardsSlice &
+    ThreadsSlice &
+    AuthSlice &
+    UsersSlice;

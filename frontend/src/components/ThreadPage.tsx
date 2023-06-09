@@ -12,17 +12,21 @@ import PostBoxBody from "./PostBoxBody";
 export default function ThreadPage() {
     const { hash } = useLocation();
     const hashNumber = Number(hash.substring(1));
-    const [highlightedMessage, setHighlightedMessage] = useState(!Number.isNaN(hashNumber)
-        ? hashNumber : null);
+    const [highlightedMessage, setHighlightedMessage] = useState(
+        !Number.isNaN(hashNumber) ? hashNumber : null
+    );
     const replyFormRef = useRef<ReplyFormRef>(null);
     const [loading, setLoading] = useState(true);
     const board = useBoard();
     const { threadNumber } = useParams();
     const fetchThreadByNumber = useStore((state) => state.fetchThreadByNumber);
-    const thread = useStore((state) => state
-        .threads.find((t) => t.number === Number(threadNumber)));
+    const thread = useStore((state) =>
+        state.threads.find((t) => t.number === Number(threadNumber))
+    );
     const unloadPreviews = useStore((state) => state.refreshPreviews);
-    const boardNotLoaded = useStore((state) => board && !state.loadedBoards.includes(board.id));
+    const boardNotLoaded = useStore(
+        (state) => board && !state.loadedBoards.includes(board.id)
+    );
 
     useEffect(() => {
         if (highlightedMessage === null) return;
@@ -30,8 +34,6 @@ export default function ThreadPage() {
         const clearHighlightedMessage = setTimeout(() => {
             setHighlightedMessage(null);
         }, 2000);
-
-        console.log(clearHighlightedMessage);
 
         // eslint-disable-next-line consistent-return
         return () => clearTimeout(clearHighlightedMessage);
@@ -77,16 +79,24 @@ export default function ThreadPage() {
                     {!opPost && (
                         <>
                             <h2 className="text-xl">{title}</h2>
-                            <span className="text-gray-500 bold">Langan aloitusviesti on poistettu.</span>
+                            <span className="text-gray-500 bold">
+                                Langan aloitusviesti on poistettu.
+                            </span>
                             <br />
                         </>
                     )}
 
                     {opPost && (
                         <>
-                            {opPost.file && <span className="text-gray-400 text-xs ml-1">{`Tiedosto: ${opPost.file.name}, ${opPost.file.size} KB`}</span>}
+                            {opPost.file && (
+                                <span className="text-gray-400 text-xs ml-1">{`Tiedosto: ${opPost.file.name}, ${opPost.file.size} KB`}</span>
+                            )}
                             <div className="mb-1 p-1 sm:p-0 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent">
-                                <PostBoxBody thread={thread} post={opPost} quotePost={quotePost} />
+                                <PostBoxBody
+                                    thread={thread}
+                                    post={opPost}
+                                    quotePost={quotePost}
+                                />
                                 <div className="clear-both sm:clear-none" />
                             </div>
                         </>
@@ -95,7 +105,11 @@ export default function ThreadPage() {
                     {replies.map((reply) => (
                         <React.Fragment key={reply.id}>
                             <div
-                                className={`overflow-hidden border-2 ${reply.number === highlightedMessage ? "border-purple-500" : "border-purple-200"} bg-white p-1 block sm:inline-block w-full sm:w-auto sm:max-w-[96%] break-words`}
+                                className={`overflow-hidden border-2 ${
+                                    reply.number === highlightedMessage
+                                        ? "border-purple-500"
+                                        : "border-purple-200"
+                                } bg-white p-1 block sm:inline-block w-full sm:w-auto sm:max-w-[96%] break-words`}
                                 key={reply.id}
                                 id={`${reply.id}`}
                             >
@@ -109,9 +123,11 @@ export default function ThreadPage() {
                         </React.Fragment>
                     ))}
 
-                    {loading
-                        ? <i>Ladataan vastauksia...</i>
-                        : <ReplyForm thread={thread} ref={replyFormRef} />}
+                    {loading ? (
+                        <i>Ladataan vastauksia...</i>
+                    ) : (
+                        <ReplyForm thread={thread} ref={replyFormRef} />
+                    )}
                 </article>
             </main>
         </>

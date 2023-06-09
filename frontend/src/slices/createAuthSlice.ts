@@ -11,7 +11,10 @@ const createAuthSlice: StoreSlice<AuthSlice> = (set) => ({
     },
     login: async (loginForm: LoginForm) => {
         const authorizedUser = await usersService.authorize(loginForm);
-        window.localStorage.setItem("authorizedUser", JSON.stringify(authorizedUser));
+        window.localStorage.setItem(
+            "authorizedUser",
+            JSON.stringify(authorizedUser)
+        );
         set(() => ({ authorizedUser }));
     },
     logout: () => {

@@ -30,7 +30,7 @@ export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
                             <Link to={`/${board.path}`} key={board.id}>
                                 {`${board.path}`}
                             </Link>
-                            {(index + 1 < boards.length) && " / "}
+                            {index + 1 < boards.length && " / "}
                         </li>
                     ))}
                 </ul>

@@ -25,7 +25,8 @@ router.get("/:id", async (req, res) => {
 
 // Creating a board
 router.post("/", extractUser, async (req, res) => {
-    if (req.authorizedUser.role !== "SOPSY") return res.status(403).json({ error: "Riittämättömät oikeudet." });
+    if (req.authorizedUser.role !== "SOPSY")
+        return res.status(403).json({ error: "Riittämättömät oikeudet." });
 
     const { body } = req;
 
@@ -42,7 +43,8 @@ router.post("/", extractUser, async (req, res) => {
 // Editing a board
 router.put("/:id", extractUser, async (req, res) => {
     // TODO: Make it possible for moderators to change board titles
-    if (req.authorizedUser.role !== "SOPSY") return res.status(403).json({ error: "Riittämättömät oikeudet." });
+    if (req.authorizedUser.role !== "SOPSY")
+        return res.status(403).json({ error: "Riittämättömät oikeudet." });
 
     const { body } = req;
 
@@ -52,7 +54,9 @@ router.put("/:id", extractUser, async (req, res) => {
         title: body.title,
     };
 
-    const savedBoard = await Board.findByIdAndUpdate(req.params.id, board, { new: true });
+    const savedBoard = await Board.findByIdAndUpdate(req.params.id, board, {
+        new: true,
+    });
     res.json(savedBoard);
 });
 
@@ -69,12 +73,12 @@ router.get("/:id/threads", async (req, res) => {
     // TODO: Implement different thread list modes here
     const perDocumentLimit = 1;
 
-    const threads = await Thread
-        .find({ board: mongoose.Types.ObjectId(req.params.id) })
-        .populate({
-            path: "posts",
-            perDocumentLimit,
-        });
+    const threads = await Thread.find({
+        board: mongoose.Types.ObjectId(req.params.id),
+    }).populate({
+        path: "posts",
+        perDocumentLimit,
+    });
 
     res.json(threads);
 });
@@ -94,7 +98,9 @@ router.post("/:id/threads", uploadMiddleware, async (req, res) => {
     // Both file and text are required
     if (!req.file || !body.text?.trim()) {
         const field = req.file ? "text" : "file";
-        return res.status(400).json({ error: "Lanka vaatii sekä kuvan että tekstin.", field });
+        return res
+            .status(400)
+            .json({ error: "Lanka vaatii sekä kuvan että tekstin.", field });
     }
 
     const newOpPost = new Post({

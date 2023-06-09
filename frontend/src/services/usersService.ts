@@ -11,7 +11,10 @@ const getAllUsers = async (jwtToken: string): Promise<Array<User>> => {
     return response.data;
 };
 
-const createUser = async (jwtToken: string, userForm: UserForm): Promise<User> => {
+const createUser = async (
+    jwtToken: string,
+    userForm: UserForm
+): Promise<User> => {
     const response = await axios.post(baseUrl, userForm, {
         headers: { Authorization: `Bearer ${jwtToken}` },
     });
@@ -19,7 +22,11 @@ const createUser = async (jwtToken: string, userForm: UserForm): Promise<User> =
     return response.data;
 };
 
-const editUser = async (jwtToken: string, userId: string, userForm: UserForm) => {
+const editUser = async (
+    jwtToken: string,
+    userId: string,
+    userForm: UserForm
+) => {
     const response = await axios.put(`${baseUrl}/${userId}`, userForm, {
         headers: { Authorization: `Bearer ${jwtToken}` },
     });
@@ -31,11 +38,15 @@ const changePassword = async (
     jwtToken: string,
     userId: string,
     oldPassword: string,
-    newPassword: string,
+    newPassword: string
 ): Promise<void> => {
-    const response = await axios.post(`${baseUrl}/${userId}/password`, { oldPassword, newPassword }, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-    });
+    const response = await axios.post(
+        `${baseUrl}/${userId}/password`,
+        { oldPassword, newPassword },
+        {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+    );
 
     return response.data;
 };

@@ -13,9 +13,10 @@ const upload = multer({
 const handleMulterError = (error, req, res, next) => {
     // Set by the preceding middleware
     if (error instanceof MulterError) {
-        const errorMsg = error.code === "LIMIT_FILE_SIZE"
-            ? "Tiedosto on liian suuri."
-            : "Tapahtui tuntematon virhe tiedoston käsittelemisessä.";
+        const errorMsg =
+            error.code === "LIMIT_FILE_SIZE"
+                ? "Tiedosto on liian suuri."
+                : "Tapahtui tuntematon virhe tiedoston käsittelemisessä.";
 
         return res.status(400).json({ error: errorMsg, field: "file" });
     }
@@ -27,10 +28,14 @@ const validateExtension = async (req, res, next) => {
 
     if (file) {
         const fileData = await fileTypeFromBuffer(file.buffer);
-        const unallowedExtension = !fileData?.mime
-            || !config.allowedMimeTypes.includes(fileData.mime);
+        const unallowedExtension =
+            !fileData?.mime || !config.allowedMimeTypes.includes(fileData.mime);
 
-        if (unallowedExtension) return res.status(400).json({ error: "Antamasi tiedostomuotoa ei tueta.", field: "file" });
+        if (unallowedExtension)
+            return res.status(400).json({
+                error: "Antamasi tiedostomuotoa ei tueta.",
+                field: "file",
+            });
 
         req.file.actualMimetype = fileData.mime;
         req.file.actualExt = fileData.ext;

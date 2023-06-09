@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import useStore from "./hooks/useStore";
 
@@ -22,7 +18,9 @@ function App() {
     const [boardsLoading, setBoardsLoading] = useState(true);
     const [imageboardDataLoading, setImageboardDataLoading] = useState(true);
     const initializeAuth = useStore((state) => state.initializeAuth);
-    const initializeImageboard = useStore((state) => state.initializeImageboard);
+    const initializeImageboard = useStore(
+        (state) => state.initializeImageboard
+    );
     const initializeBoards = useStore((state) => state.initializeBoards);
 
     useEffect(() => {
@@ -36,8 +34,7 @@ function App() {
     }, [initializeAuth]);
 
     useEffect(() => {
-        initializeBoards()
-            .then(() => setBoardsLoading(false));
+        initializeBoards().then(() => setBoardsLoading(false));
     }, [initializeBoards, setBoardsLoading]);
 
     if (boardsLoading || imageboardDataLoading) {
@@ -58,11 +55,17 @@ function App() {
                         <Route index element={<DashboardPage />} />
                     </Route>
 
-                    <Route path="/post/:postNumber" element={<RedirectToPost />} />
+                    <Route
+                        path="/post/:postNumber"
+                        element={<RedirectToPost />}
+                    />
 
                     <Route path="/:boardPath" element={<HandleBoard />}>
                         <Route index element={<BoardIndex />} />
-                        <Route path="/:boardPath/:threadNumber" element={<ThreadPage />} />
+                        <Route
+                            path="/:boardPath/:threadNumber"
+                            element={<ThreadPage />}
+                        />
                     </Route>
                 </Routes>
             </Router>

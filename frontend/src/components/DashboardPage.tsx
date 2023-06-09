@@ -62,28 +62,40 @@ export default function UserPage() {
             <FrontPageLayout>
                 <FrontPageBox>
                     <FrontPageBoxHeader>
-                        <h3>{`${roles.find((r) => r.name === authorizedUser.role)?.pretty} ${authorizedUser.username}`}</h3>
+                        <h3>{`${
+                            roles.find((r) => r.name === authorizedUser.role)
+                                ?.pretty
+                        } ${authorizedUser.username}`}</h3>
 
                         <div className="text-xs text-purple-400">
                             {!editingPassword && !editingUsers && (
-                                <button className="underline mr-2 hover:text-purple-500" type="button" onClick={() => logout()}>
+                                <button
+                                    className="underline mr-2 hover:text-purple-500"
+                                    type="button"
+                                    onClick={() => logout()}
+                                >
                                     <LogoutIcon className="inline-block h-3 w-3" />
                                     Kirjaudu ulos
                                 </button>
                             )}
 
-                            <button className="underline mr-2 hover:text-purple-500" type="button" onClick={() => toggleChangePassword()}>
-                                {!editingUsers && (!editingPassword ? (
-                                    <>
-                                        <LockClosedIcon className="inline-block h-3 w-3" />
-                                        Salasana
-                                    </>
-                                ) : (
-                                    <>
-                                        <XIcon className="inline-block h-3 w-3" />
-                                        Poistu
-                                    </>
-                                ))}
+                            <button
+                                className="underline mr-2 hover:text-purple-500"
+                                type="button"
+                                onClick={() => toggleChangePassword()}
+                            >
+                                {!editingUsers &&
+                                    (!editingPassword ? (
+                                        <>
+                                            <LockClosedIcon className="inline-block h-3 w-3" />
+                                            Salasana
+                                        </>
+                                    ) : (
+                                        <>
+                                            <XIcon className="inline-block h-3 w-3" />
+                                            Poistu
+                                        </>
+                                    ))}
                             </button>
                         </div>
                     </FrontPageBoxHeader>
@@ -95,9 +107,7 @@ export default function UserPage() {
                         </div>
                     )}
 
-                    <p>
-                        Tervetuloa Laudan hallintapaneeliin.
-                    </p>
+                    <p>Tervetuloa Laudan hallintapaneeliin.</p>
                 </FrontPageBox>
 
                 {authorizedUser.role === "SOPSY" && (
@@ -106,25 +116,36 @@ export default function UserPage() {
                             <h3>Käyttäjät</h3>
 
                             <div className="text-xs text-purple-400">
-                                {editingUsers && !editingUser && !creatingUser && (
-                                    <button className="underline mr-2 hover:text-purple-500" type="button" onClick={() => startCreatingUser()}>
-                                        <UserAddIcon className="inline-block h-3 w-3" />
-                                        Uusi
-                                    </button>
-                                )}
+                                {editingUsers &&
+                                    !editingUser &&
+                                    !creatingUser && (
+                                        <button
+                                            className="underline mr-2 hover:text-purple-500"
+                                            type="button"
+                                            onClick={() => startCreatingUser()}
+                                        >
+                                            <UserAddIcon className="inline-block h-3 w-3" />
+                                            Uusi
+                                        </button>
+                                    )}
 
-                                <button className="underline mr-2 hover:text-purple-500" type="button" onClick={() => toggleEditingUsers()}>
-                                    {!editingPassword && (!editingUsers ? (
-                                        <>
-                                            <PencilIcon className="inline-block h-3 w-3" />
-                                            Muokkaa
-                                        </>
-                                    ) : (
-                                        <>
-                                            <XIcon className="inline-block h-3 w-3" />
-                                            Poistu
-                                        </>
-                                    ))}
+                                <button
+                                    className="underline mr-2 hover:text-purple-500"
+                                    type="button"
+                                    onClick={() => toggleEditingUsers()}
+                                >
+                                    {!editingPassword &&
+                                        (!editingUsers ? (
+                                            <>
+                                                <PencilIcon className="inline-block h-3 w-3" />
+                                                Muokkaa
+                                            </>
+                                        ) : (
+                                            <>
+                                                <XIcon className="inline-block h-3 w-3" />
+                                                Poistu
+                                            </>
+                                        ))}
                                 </button>
                             </div>
                         </FrontPageBoxHeader>
@@ -158,17 +179,30 @@ export default function UserPage() {
                                 {users.map((u) => (
                                     <tr key={u.id}>
                                         <td>{u.username}</td>
-                                        <td>{roles.find((r) => r.name === u.role)?.pretty ?? "Tuntematon"}</td>
-                                        {editingUsers && !editingUser && !creatingUser && u.role !== "SOPSY" && (
-                                            <td className="text-xs text-gray-400">
-                                                {" ["}
-                                                <button type="button" className="text-purple-400 hover:text-purple-500" onClick={() => setEditingUser(u)}>
-                                                    <PencilIcon className="inline-block h-3 w-3" />
-                                                    Muokkaa
-                                                </button>
-                                                {" ]"}
-                                            </td>
-                                        )}
+                                        <td>
+                                            {roles.find(
+                                                (r) => r.name === u.role
+                                            )?.pretty ?? "Tuntematon"}
+                                        </td>
+                                        {editingUsers &&
+                                            !editingUser &&
+                                            !creatingUser &&
+                                            u.role !== "SOPSY" && (
+                                                <td className="text-xs text-gray-400">
+                                                    {" ["}
+                                                    <button
+                                                        type="button"
+                                                        className="text-purple-400 hover:text-purple-500"
+                                                        onClick={() =>
+                                                            setEditingUser(u)
+                                                        }
+                                                    >
+                                                        <PencilIcon className="inline-block h-3 w-3" />
+                                                        Muokkaa
+                                                    </button>
+                                                    {" ]"}
+                                                </td>
+                                            )}
                                     </tr>
                                 ))}
                             </tbody>

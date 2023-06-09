@@ -1,11 +1,14 @@
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 
-dotenv.config();
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
+dotenv.config({ path: `${__dirname}/../../.env` });
 
 export default {
     port: process.env.PORT ?? 3001,
     mongoUri: process.env.MONGODB_URI,
-    secret: process.env.SECRET,
+    secret: process.env.JWT_SECRET,
     hashRounds: 10,
 
     minioHost: process.env.MINIO_HOST ?? "localhost",

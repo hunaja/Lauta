@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 body {
-    @apply bg-rose-50
+    @apply bg-rose-50;
 }
 
 a {
-    @apply text-indigo-500
+    @apply text-indigo-500;
 }
 
 a:hover {
-    @apply text-indigo-700 underline
+    @apply text-indigo-700 underline;
 }

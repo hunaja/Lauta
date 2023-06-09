@@ -49,12 +49,20 @@ const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
         };
 
         createThread(board, thread)
-            .then((createdThread) => navigate(`/${board.path}/${createdThread.number}`))
+            .then((createdThread) =>
+                navigate(`/${board.path}/${createdThread.number}`)
+            )
             .catch((e) => {
-                setError(e.response?.data?.field ?? "text", {
-                    type: "api",
-                    message: e.response?.data?.error ?? "Viestiä ei voitu lähettää tuntemattoman virheen vuoksi.",
-                }, { shouldFocus: true });
+                setError(
+                    e.response?.data?.field ?? "text",
+                    {
+                        type: "api",
+                        message:
+                            e.response?.data?.error ??
+                            "Viestiä ei voitu lähettää tuntemattoman virheen vuoksi.",
+                    },
+                    { shouldFocus: true }
+                );
             });
     };
 
@@ -83,7 +91,11 @@ const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
                         className="border-2 m-1 p-1 w-full border-purple-200 focus:outline-none focus:border-purple-400"
                         placeholder="Tiedosto"
                     />
-                    {errors.file?.type === "api" && <span className="pl-4 text-gray-400 text-sm">{errors.file.message}</span>}
+                    {errors.file?.type === "api" && (
+                        <span className="pl-4 text-gray-400 text-sm">
+                            {errors.file.message}
+                        </span>
+                    )}
                     <br />
                     <input
                         className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
@@ -96,10 +108,17 @@ const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
                         {...register("text", { maxLength: 10000 })}
                         placeholder="Langan sisältö"
                     />
-                    {errors.text?.type === "api" && <span className="pl-4 text-gray-400 text-sm">{errors.text.message}</span>}
+                    {errors.text?.type === "api" && (
+                        <span className="pl-4 text-gray-400 text-sm">
+                            {errors.text.message}
+                        </span>
+                    )}
                     <br />
                     <div className="flex justify-end mt-1">
-                        <button type="submit" className="bg-purple-500 p-1 text-white p-1 pl-2 pr-2">
+                        <button
+                            type="submit"
+                            className="bg-purple-500 p-1 text-white p-1 pl-2 pr-2"
+                        >
                             Luo lanka
                         </button>
                     </div>

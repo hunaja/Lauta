@@ -12,16 +12,21 @@ router.get("/", (req, res) => {
 });
 
 router.get("/latestImages", async (req, res) => {
-    const posts = await Post.find({ file: { $exists: true } }, "file createdAt number")
+    const posts = await Post.find(
+        { file: { $exists: true } },
+        "file createdAt number"
+    )
         .sort("-createdAt")
         .limit(5);
 
-    res.json(posts.map((p) => ({
-        name: p.file.name,
-        sentAt: p.createdAt,
-        id: p.id,
-        postNumber: p.number,
-    })));
+    res.json(
+        posts.map((p) => ({
+            name: p.file.name,
+            sentAt: p.createdAt,
+            id: p.id,
+            postNumber: p.number,
+        }))
+    );
 });
 
 export default router;

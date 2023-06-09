@@ -13,7 +13,9 @@ export default function BoardIndex() {
     const [formHidden, setFormHidden] = useState(true);
     const board = useBoard();
     const loadPreviews = useStore((state) => state.loadPreviews);
-    const boardLoaded = useStore((state) => board && state.loadedBoards.includes(board.id));
+    const boardLoaded = useStore(
+        (state) => board && state.loadedBoards.includes(board.id)
+    );
     const refreshPreviews = useStore((state) => state.refreshPreviews);
 
     useEffect(() => {
@@ -64,9 +66,7 @@ export default function BoardIndex() {
 
             {!formHidden && <ThreadForm ref={threadFormRef} />}
 
-            <main>
-                {boardLoaded ? <BoardCatalog /> : <p>ladataan...</p>}
-            </main>
+            <main>{boardLoaded ? <BoardCatalog /> : <p>ladataan...</p>}</main>
         </>
     );
 }

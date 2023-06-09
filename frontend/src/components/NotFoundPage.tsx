@@ -22,16 +22,18 @@ export default function NotFoundPage() {
                     <FrontPageBoxHeader>
                         <h3>Pahus, 404!</h3>
                         <div className="text-xs text-purple-400">
-                            <button className="underline mr-2 hover:text-purple-500" type="button" onClick={() => goBack()}>
+                            <button
+                                className="underline mr-2 hover:text-purple-500"
+                                type="button"
+                                onClick={() => goBack()}
+                            >
                                 <ArrowNarrowLeftIcon className="inline-block h-3 w-3" />
                                 Palaa Takaisin
                             </button>
                         </div>
                     </FrontPageBoxHeader>
 
-                    <p>
-                        Huh huh! Tällaista sivua ei kyllä ole olemassa.
-                    </p>
+                    <p>Huh huh! Tällaista sivua ei kyllä ole olemassa.</p>
                 </FrontPageBox>
             </FrontPageLayout>
         </>

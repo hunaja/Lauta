@@ -18,10 +18,10 @@ import usersController from "./controllers/usersController.js";
 
 const app = express();
 
-initializeFiles()
-    .then(() => console.log("Configured Minio."));
+initializeFiles().then(() => console.log("Configured Minio."));
 
-mongoose.connect(config.mongoUri)
+mongoose
+    .connect(config.mongoUri)
     .then(async () => {
         console.log("Connected to MongoDB.");
 
@@ -34,7 +34,9 @@ mongoose.connect(config.mongoUri)
                 role: "SOPSY",
             });
             await defaultUser.save();
-            console.log("Created a default sysop user with credentials root:root.");
+            console.log(
+                "Created a default sysop user with credentials root:root."
+            );
         }
     })
     .catch((error) => console.log("Can't connect to MongoDB:", error.message));

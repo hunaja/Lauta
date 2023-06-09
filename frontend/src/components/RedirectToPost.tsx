@@ -8,10 +8,12 @@ export default function RedirectToPost() {
     const loadThreadWithPost = useStore((state) => state.loadThreadWithPost);
     const { postNumber } = useParams();
     const number = Number(postNumber);
-    const thread = useStore((state) => state.threads
-        .find((t) => t.posts.map((p) => p.number).includes(number)));
-    const threadBoardPath = useStore((state) => state.boards
-        .find((b) => b.id === thread?.board)?.path);
+    const thread = useStore((state) =>
+        state.threads.find((t) => t.posts.map((p) => p.number).includes(number))
+    );
+    const threadBoardPath = useStore(
+        (state) => state.boards.find((b) => b.id === thread?.board)?.path
+    );
 
     useEffect(() => {
         if (!loading) return;
@@ -21,8 +23,7 @@ export default function RedirectToPost() {
             return;
         }
 
-        loadThreadWithPost(number)
-            .catch(() => setLoading(false));
+        loadThreadWithPost(number).catch(() => setLoading(false));
     }, [loading, thread, loadThreadWithPost, number]);
 
     if (loading) return <p>Ladataan...</p>;
@@ -31,5 +32,10 @@ export default function RedirectToPost() {
         return <NotFoundPage />;
     }
 
-    return <Navigate to={`/${threadBoardPath}/${thread.number}#${postNumber}`} replace />;
+    return (
+        <Navigate
+            to={`/${threadBoardPath}/${thread.number}#${postNumber}`}
+            replace
+        />
+    );
 }

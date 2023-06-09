@@ -8,7 +8,8 @@ import { getFileBuffer, deleteFile } from "../utils/files.js";
 const router = Router();
 
 router.delete("/:id", extractUser, async (req, res) => {
-    if (req.authorizedUser.role !== "SOPSY") return res.status(403).json({ error: "Riittämättömät oikeudet." });
+    if (req.authorizedUser.role !== "SOPSY")
+        return res.status(403).json({ error: "Riittämättömät oikeudet." });
 
     const post = await Post.findById(req.params.id);
     if (!post) return res.sendStatus(404);
@@ -46,7 +47,8 @@ router.get("/:id/file", async (req, res) => {
 });
 
 router.delete("/:id/file", extractUser, async (req, res) => {
-    if (req.authorizedUser.role !== "SOPSY") return res.status(403).json({ error: "Riittämättömät oikeudet." });
+    if (req.authorizedUser.role !== "SOPSY")
+        return res.status(403).json({ error: "Riittämättömät oikeudet." });
 
     const post = await Post.findById(req.params.id);
     const thread = await Thread.findById(post.thread);

@@ -25,15 +25,30 @@ export default function BoardForm({
     return (
         <div className="p-1">
             <form onSubmit={handleSubmit(handleFormSubmit)}>
-                <input {...register("path", { required: true })} className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1" placeholder="Osoite" />
+                <input
+                    {...register("path", { required: true })}
+                    className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
+                    placeholder="Osoite"
+                />
                 <br />
-                <input {...register("name", { required: true })} className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1" placeholder="Nimi" />
+                <input
+                    {...register("name", { required: true })}
+                    className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
+                    placeholder="Nimi"
+                />
                 <br />
-                <input {...register("title", { required: true })} className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1" placeholder="Otsikko" />
+                <input
+                    {...register("title", { required: true })}
+                    className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
+                    placeholder="Otsikko"
+                />
                 <br />
 
                 <div className="flex justify-end mt-1">
-                    <button className="bg-purple-500 p-1 text-white p-1 pl-2 pr-2" type="submit">
+                    <button
+                        className="bg-purple-500 p-1 text-white p-1 pl-2 pr-2"
+                        type="submit"
+                    >
                         <SaveIcon className="inline-block h-3 w-3 mr-1" />
                         {buttonText}
                     </button>

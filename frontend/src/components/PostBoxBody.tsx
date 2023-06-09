@@ -25,25 +25,34 @@ export default function PostBoxBody({
     const [popupOpen, setPopupOpen] = useState(false);
     const [imageOpened, setImageOpened] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
-    const sysopPermissions = useStore((state) => state.authorizedUser?.role === "SOPSY");
+    const sysopPermissions = useStore(
+        (state) => state.authorizedUser?.role === "SOPSY"
+    );
     const imageboardConfig = useStore((state) => state.imageboardConfig);
     const deletePost = useStore((state) => state.deletePost);
     const deleteFile = useStore((state) => state.deletePostFile);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+            if (
+                popupRef.current &&
+                !popupRef.current.contains(event.target as Node)
+            ) {
                 setPopupOpen(false);
             }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, [setPopupOpen]);
 
     if (!board || !imageboardConfig || !thread) return null;
 
-    const onIdClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, number: number) => {
+    const onIdClick = (
+        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+        number: number
+    ) => {
         event.preventDefault();
         if (quotePost) quotePost(number);
     };
@@ -72,7 +81,11 @@ export default function PostBoxBody({
 
     const imageUrl = imageOpened
         ? `/api/posts/${post.id}/file`
-        : `${isOp ? imageboardConfig.opThumbnailPath : imageboardConfig.thumbnailPath}/${post.id}.png`;
+        : `${
+              isOp
+                  ? imageboardConfig.opThumbnailPath
+                  : imageboardConfig.thumbnailPath
+          }/${post.id}.png`;
 
     return (
         <>
@@ -80,44 +93,83 @@ export default function PostBoxBody({
                 <>
                     {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,
                          jsx-a11y/click-events-have-key-events */}
-                    <aside className="float-left m-1 cursor-pointer hidden sm:block" onClick={() => toggleImageOpened()}>
-                        <img src={imageUrl} alt="" loading="lazy" onLoad={() => imageOpened && setImageLoaded(true)} />
+                    <aside
+                        className="float-left m-1 cursor-pointer hidden sm:block"
+                        onClick={() => toggleImageOpened()}
+                    >
+                        <img
+                            src={imageUrl}
+                            alt=""
+                            loading="lazy"
+                            onLoad={() => imageOpened && setImageLoaded(true)}
+                        />
                     </aside>
-                    {imageOpened && imageLoaded && <br className="clear-both" />}
+                    {imageOpened && imageLoaded && (
+                        <br className="clear-both" />
+                    )}
                 </>
             )}
 
             <div className="text-sm text-gray-500">
-                <b className={`${authorColor()}`}>{post.author ?? "Anonyymi"}</b>
+                <b className={`${authorColor()}`}>
+                    {post.author ?? "Anonyymi"}
+                </b>
                 {" • "}
-                <Link to={`#${post.number}`} onClick={(event) => onIdClick(event, post.number)}>
+                <Link
+                    to={`#${post.number}`}
+                    onClick={(event) => onIdClick(event, post.number)}
+                >
                     {`No. ${post.number}`}
                 </Link>
                 {" • "}
                 <time>{formatTimeAgo(post.createdAt)}</time>
-                <button type="button" className="text-indigo-500 hover:text-indigo-700 hover:underline" onClick={() => !popupOpen && setPopupOpen(true)}>
-                    {!popupOpen
-                        ? <ChevronDownIcon className="inline-block h-3 w-3 ml-1" />
-                        : <ChevronRightIcon className="text-indigo-700 inline-block h-3 w-3 ml-1" />}
+                <button
+                    type="button"
+                    className="text-indigo-500 hover:text-indigo-700 hover:underline"
+                    onClick={() => !popupOpen && setPopupOpen(true)}
+                >
+                    {!popupOpen ? (
+                        <ChevronDownIcon className="inline-block h-3 w-3 ml-1" />
+                    ) : (
+                        <ChevronRightIcon className="text-indigo-700 inline-block h-3 w-3 ml-1" />
+                    )}
                 </button>
 
                 {popupOpen && (
-                    <div className="absolute inline-block z-10 border-2 text-sm border-purple-400 bg-white" ref={popupRef}>
+                    <div
+                        className="absolute inline-block z-10 border-2 text-sm border-purple-400 bg-white"
+                        ref={popupRef}
+                    >
                         <ul className="text-indigo-700">
                             <li>
-                                <button type="button" className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200">Vinkkaa</button>
+                                <button
+                                    type="button"
+                                    className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200"
+                                >
+                                    Vinkkaa
+                                </button>
                             </li>
                             {sysopPermissions && (
                                 <>
                                     <li>
-                                        <button onClick={() => onDeletePostClick()} type="button" className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200">
+                                        <button
+                                            onClick={() => onDeletePostClick()}
+                                            type="button"
+                                            className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200"
+                                        >
                                             Poista viesti
                                         </button>
                                     </li>
 
                                     {post.file && (
                                         <li>
-                                            <button onClick={() => onDeleteFileClick()} type="button" className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200">
+                                            <button
+                                                onClick={() =>
+                                                    onDeleteFileClick()
+                                                }
+                                                type="button"
+                                                className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200"
+                                            >
                                                 Poista kuva
                                             </button>
                                         </li>
@@ -140,17 +192,25 @@ export default function PostBoxBody({
                 <>
                     {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,
                          jsx-a11y/click-events-have-key-events */}
-                    <aside className="float-left block mr-1 cursor-pointer" onClick={() => toggleImageOpened()}>
-                        <img src={imageUrl} alt="" loading="lazy" onLoad={() => imageOpened && setImageLoaded(true)} />
+                    <aside
+                        className="float-left block mr-1 cursor-pointer"
+                        onClick={() => toggleImageOpened()}
+                    >
+                        <img
+                            src={imageUrl}
+                            alt=""
+                            loading="lazy"
+                            onLoad={() => imageOpened && setImageLoaded(true)}
+                        />
                     </aside>
-                    {imageOpened && imageLoaded && <br className="clear-both" />}
+                    {imageOpened && imageLoaded && (
+                        <br className="clear-both" />
+                    )}
                 </>
             )}
             <div className="block overflow-hidden">
                 <h2 className="text-xl">{isOp && thread.title}</h2>
-                <blockquote>
-                    {renderPostContent(post.text)}
-                </blockquote>
+                <blockquote>{renderPostContent(post.text)}</blockquote>
             </div>
         </>
     );

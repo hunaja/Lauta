@@ -1,10 +1,5 @@
 import boardsService from "../services/boardsService";
-import {
-    Board,
-    BoardWithoutId,
-    BoardsSlice,
-    AuthSlice,
-} from "../types";
+import { Board, BoardWithoutId, BoardsSlice, AuthSlice } from "../types";
 import { StoreSlice } from "../hooks/useStore";
 
 const createBoardsSlice: StoreSlice<BoardsSlice, AuthSlice> = (set, get) => ({
@@ -28,7 +23,10 @@ const createBoardsSlice: StoreSlice<BoardsSlice, AuthSlice> = (set, get) => ({
         const updatedBoard = await boardsService.update(token, board);
 
         set((state) => ({
-            boards: [...state.boards.filter((b) => b.id !== updatedBoard.id), updatedBoard],
+            boards: [
+                ...state.boards.filter((b) => b.id !== updatedBoard.id),
+                updatedBoard,
+            ],
         }));
     },
     deleteBoard: async (board: Board) => {
@@ -37,7 +35,9 @@ const createBoardsSlice: StoreSlice<BoardsSlice, AuthSlice> = (set, get) => ({
 
         await boardsService.remove(token, board);
 
-        set((state) => ({ boards: state.boards.filter((b) => b.id !== board.id) }));
+        set((state) => ({
+            boards: state.boards.filter((b) => b.id !== board.id),
+        }));
     },
 });
 

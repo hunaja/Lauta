@@ -13,7 +13,10 @@ export type StoreSlice<T extends object, E extends object = T> = (
 ) => T;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createRootSlice = (set: SetState<Partial<Store>>, get: GetState<any>) => ({
+const createRootSlice = (
+    set: SetState<Partial<Store>>,
+    get: GetState<any>
+) => ({
     ...createImageboardSlice(set, get),
     ...createBoardsSlice(set, get),
     ...createThreadsSlice(set, get),

@@ -1,9 +1,5 @@
 import { StoreSlice } from "../hooks/useStore";
-import {
-    AuthSlice,
-    UserForm,
-    UsersSlice,
-} from "../types";
+import { AuthSlice, UserForm, UsersSlice } from "../types";
 import usersService from "../services/usersService";
 
 const createUsersSlice: StoreSlice<UsersSlice, AuthSlice> = (set, get) => ({

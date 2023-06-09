@@ -3,10 +3,12 @@ import React from "react";
 import BoardHeader from "./BoardHeader";
 
 interface FrontPageLayoutProperties {
-    children: any
+    children: any;
 }
 
-export default function FrontPageLayout({ children }: FrontPageLayoutProperties) {
+export default function FrontPageLayout({
+    children,
+}: FrontPageLayoutProperties) {
     return (
         <>
             <BoardHeader showBoardHeader={false} />

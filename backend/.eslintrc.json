@@ -3,10 +3,7 @@
         "es6": true,
         "jest": true
     },
-    "extends": [
-        "airbnb-base",
-        "eslint:recommended"
-    ],
+    "extends": ["airbnb-base", "eslint:recommended", "eslint"],
     "parser": "@babel/eslint-parser",
     "rules": {
         "import/extensions": 0,

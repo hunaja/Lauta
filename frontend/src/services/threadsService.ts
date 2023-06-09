@@ -1,11 +1,5 @@
 import axios from "axios";
-import {
-    Board,
-    Post,
-    PostForm,
-    Thread,
-    ThreadForm,
-} from "../types";
+import { Board, Post, PostForm, Thread, ThreadForm } from "../types";
 
 const boardsBaseUrl = (board: Board) => `/api/boards/${board.id}/threads`;
 
@@ -16,7 +10,10 @@ const getPreviews = async (board: Board, page = 0): Promise<Thread[]> => {
     return response.data;
 };
 
-const create = async (board: Board, threadForm: ThreadForm): Promise<Thread> => {
+const create = async (
+    board: Board,
+    threadForm: ThreadForm
+): Promise<Thread> => {
     const formData = new FormData();
     formData.append("title", threadForm.title);
     formData.append("text", threadForm.post.text);
@@ -50,11 +47,15 @@ const reply = async (thread: Thread, postForm: PostForm): Promise<Post> => {
     formData.append("author", postForm.author);
     if (postForm.file) formData.append("file", postForm.file);
 
-    const response = await axios.post(`/api/threads/${thread.id}/replies`, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    });
+    const response = await axios.post(
+        `/api/threads/${thread.id}/replies`,
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
     return response.data;
 };
 
