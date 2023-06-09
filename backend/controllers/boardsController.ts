@@ -43,7 +43,7 @@ router.post(
 );
 
 // Editing a board
-router.put("/:id", extractUser, async (req, res) => {
+router.put("/:id", requireMinRole(UserRole.ADMIN), async (req, res) => {
     // TODO: Make it possible for moderators to change board titles
     const { body } = req;
 
