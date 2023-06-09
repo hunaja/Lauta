@@ -2,6 +2,7 @@ import multer, { MulterError } from "multer";
 import { fileTypeFromBuffer } from "file-type";
 
 import config from "./config.js";
+import { Request, Response, NextFunction } from "express";
 
 const upload = multer({
     limits: {
@@ -10,7 +11,12 @@ const upload = multer({
     },
 }).single("file");
 
-const handleMulterError = (error, req, res, next) => {
+const handleMulterError = (
+    error: unknown,
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     // Set by the preceding middleware
     if (error instanceof MulterError) {
         const errorMsg =
@@ -20,10 +26,15 @@ const handleMulterError = (error, req, res, next) => {
 
         return res.status(400).json({ error: errorMsg, field: "file" });
     }
+
     next();
 };
 
-const validateExtension = async (req, res, next) => {
+const validateExtension = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { file } = req;
 
     if (file) {

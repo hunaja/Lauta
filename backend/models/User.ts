@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
+import { UserRole } from "../types";
+
+export type User = {
+    id: string;
+    username: string;
+    passwordHash: string;
+    role: UserRole;
+};
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -14,7 +22,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["SOPSY", "MODERATOR", "JANNY"],
+        enum: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.TRAINEE],
         required: true,
     },
 });
@@ -30,4 +38,4 @@ userSchema.set("toJSON", {
 
 userSchema.plugin(uniqueValidator);
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model<User>("User", userSchema);

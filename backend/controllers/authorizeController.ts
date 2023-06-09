@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
         role: user.role,
     };
 
-    const token = jwt.sign(signedUser, config.secret);
+    const token = jwt.sign(signedUser, config.jwtSecret);
 
     res.json({
         id: user._id,

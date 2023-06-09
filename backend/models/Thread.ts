@@ -1,4 +1,19 @@
 import mongoose from "mongoose";
+import { Post } from "./Post";
+import { Board } from "./Board";
+
+export type Thread = {
+    id: string;
+    number: number;
+    board: Board | mongoose.Types.ObjectId;
+    title: string;
+    locked: boolean;
+    bumpedAt: Date;
+    replyCount: number;
+    fileReplyCount: number;
+    // Post ids are either populated or ObjectId
+    posts: Post[] | mongoose.Types.ObjectId[];
+};
 
 const threadSchema = new mongoose.Schema({
     number: { type: Number, required: true, unique: true },

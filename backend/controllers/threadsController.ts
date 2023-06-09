@@ -4,7 +4,8 @@ import Thread from "../models/Thread.js";
 import Post from "../models/Post.js";
 import { uploadFile } from "../utils/files.js";
 import uploadMiddleware from "../utils/uploadMiddleware.js";
-import { extractUser } from "../utils/authMiddleware.js";
+import { requireMinRole } from "../utils/authMiddleware.js";
+import { UserRole } from "../types.js";
 
 const router = Router();
 
@@ -27,17 +28,16 @@ router.get("/withReplyNumber/:number", async (req, res) => {
     const post = await Post.findOne({ number }).populate("thread");
     if (!post) return res.sendStatus(404);
 
+    const jsonThread = post.thread.toJSON();
+
     res.json({
-        ...post.thread.toJSON(),
+        ...jsonThread,
         posts: [post.toJSON()],
     });
 });
 
 // Delete a thread
-router.delete("/:id", extractUser, async (req, res) => {
-    if (req.authorizedUser.role !== "SOPSY")
-        return res.status(403).json({ error: "Riittämättömät oikeudet." });
-
+router.delete("/:id", requireMinRole(UserRole.MODERATOR), async (req, res) => {
     const thread = await Thread.findByIdAndDelete(req.params.id);
     if (!thread) return res.sendStatus(404);
 
@@ -78,7 +78,7 @@ router.post("/:id/replies", uploadMiddleware, async (req, res) => {
     // Handle post uploads
     if (req.file) {
         const postFile = await uploadFile(post, req.file);
-        post.file = postFile;
+        post.file = { ...postFile, spoiler: false };
         await post.save();
         thread.fileReplyCount = thread.fileReplyCount + 1;
     }

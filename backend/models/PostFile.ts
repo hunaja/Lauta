@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 
-const postFileSchema = new mongoose.Schema(
+export type PostFile = {
+    name: string;
+    mimeType: string;
+    location: string;
+    size: number;
+    spoiler: boolean;
+};
+
+const postFileSchema = new mongoose.Schema<PostFile>(
     {
         name: {
             type: String,

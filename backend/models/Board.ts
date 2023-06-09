@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
+export type Board = {
+    id: string;
+    name: string;
+    path: string;
+    title: string;
+};
+
 const boardSchema = new mongoose.Schema({
-    number: Number,
     name: {
         type: String,
         maxLength: 64,
@@ -27,4 +33,4 @@ boardSchema.set("toJSON", {
     },
 });
 
-export default mongoose.model("Board", boardSchema);
+export default mongoose.model<Board>("Board", boardSchema);

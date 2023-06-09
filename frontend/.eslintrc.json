@@ -12,7 +12,7 @@
         "plugin:@typescript-eslint/recommended",
         "prettier"
     ],
-    "plugins": ["react", "@typescript-eslint"],
+    "plugins": ["react", "@typescript-eslint", "prettier"],
     "settings": {
         "react": {
             "pragma": "React",

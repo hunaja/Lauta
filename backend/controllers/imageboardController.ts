@@ -21,7 +21,7 @@ router.get("/latestImages", async (req, res) => {
 
     res.json(
         posts.map((p) => ({
-            name: p.file.name,
+            name: p.file!.name,
             sentAt: p.createdAt,
             id: p.id,
             postNumber: p.number,
