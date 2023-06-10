@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { XIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
-import useSWR from "swr";
 
 import { BoardWithoutId, Board } from "../types";
 import useStore from "../hooks/useStore";
@@ -11,8 +10,8 @@ import BoardForm from "./forms/BoardForm";
 import FrontPageLayout from "./FrontPageLayout";
 import FrontPageBox from "./FrontPageBox";
 import FrontPageBoxHeader from "./FrontPageBoxHeader";
-import imageboardService from "../services/imageboardService";
 import useBoards from "../hooks/useBoards";
+import useLatestImages from "../hooks/useLatestImages";
 
 export default function FrontPage() {
     const [editMode, setEditMode] = useState(false);
@@ -23,13 +22,7 @@ export default function FrontPage() {
         (state) => state.imageboardConfig?.thumbnailPath
     );
 
-    const { data: latestImages } = useSWR(
-        "/api/latest-images",
-        imageboardService.getLatestImages,
-        {
-            refreshInterval: 10000,
-        }
-    );
+    const { latestImages } = useLatestImages();
 
     const {
         boards,

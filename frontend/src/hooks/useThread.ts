@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import useSWR from "swr";
 
 import { Board, Post, PostForm, ThreadForm } from "../types";
@@ -19,91 +20,103 @@ export default function useThread(board?: Board, threadNumber?: number) {
         }
     );
 
-    const create = async (form: ThreadForm) => {
-        if (!board) {
-            throw new Error("Board is not defined");
-        }
+    const create = useCallback(
+        async (form: ThreadForm) => {
+            if (!board) {
+                throw new Error("Board is not defined");
+            }
 
-        const createdThread = threadsService.create(board, form);
-        mutate(createdThread, false);
+            const createdThread = threadsService.create(board, form);
+            mutate(createdThread, false);
 
-        return createdThread;
-    };
+            return createdThread;
+        },
+        [board, mutate]
+    );
 
-    const reply = async (form: PostForm) => {
-        if (!thread) {
-            throw new Error("Thread is not defined");
-        }
+    const reply = useCallback(
+        async (form: PostForm) => {
+            if (!thread) {
+                throw new Error("Thread is not defined");
+            }
 
-        if (!board) {
-            throw new Error("Board is not defined");
-        }
+            if (!board) {
+                throw new Error("Board is not defined");
+            }
 
-        const replyPost = await threadsService.reply(thread, form);
+            const replyPost = await threadsService.reply(thread, form);
 
-        const { posts: oldPosts, ...otherProps } = thread;
-        const repliedThread = {
-            ...otherProps,
-            posts: [...oldPosts, replyPost],
-        };
+            const { posts: oldPosts, ...otherProps } = thread;
+            const repliedThread = {
+                ...otherProps,
+                posts: [...oldPosts, replyPost],
+            };
 
-        mutate(repliedThread, false);
+            mutate(repliedThread, false);
 
-        return replyPost;
-    };
+            return replyPost;
+        },
+        [board, mutate, thread]
+    );
 
-    const deletePost = async (post: Post) => {
-        if (!thread) {
-            throw new Error("Thread is not defined");
-        }
+    const deletePost = useCallback(
+        async (post: Post) => {
+            if (!thread) {
+                throw new Error("Thread is not defined");
+            }
 
-        if (!board) {
-            throw new Error("Board is not defined");
-        }
+            if (!board) {
+                throw new Error("Board is not defined");
+            }
 
-        if (!token) {
-            throw new Error("Unauthorized");
-        }
+            if (!token) {
+                throw new Error("Unauthorized");
+            }
 
-        await threadsService.deletePost(token, post);
+            await threadsService.deletePost(token, post);
 
-        // Remove the reply from its thread
-        const { posts: oldPosts, ...otherProps } = thread;
-        const updatedThread = {
-            ...otherProps,
-            posts: oldPosts.filter((p) => p.id !== post.id),
-        };
+            // Remove the reply from its thread
+            const { posts: oldPosts, ...otherProps } = thread;
+            const updatedThread = {
+                ...otherProps,
+                posts: oldPosts.filter((p) => p.id !== post.id),
+            };
 
-        mutate(updatedThread, false);
-    };
+            mutate(updatedThread, false);
+        },
+        [board, mutate, thread, token]
+    );
 
-    const deletePostFile = async (post: Post) => {
-        if (!thread) {
-            throw new Error("Thread is not defined");
-        }
+    const deletePostFile = useCallback(
+        async (post: Post) => {
+            if (!thread) {
+                throw new Error("Thread is not defined");
+            }
 
-        if (!board) {
-            throw new Error("Board is not defined");
-        }
+            if (!board) {
+                throw new Error("Board is not defined");
+            }
 
-        if (!token) {
-            throw new Error("Unauthorized");
-        }
+            if (!token) {
+                throw new Error("Unauthorized");
+            }
 
-        await threadsService.deletePostFile(token, post);
+            await threadsService.deletePostFile(token, post);
 
-        // Remove the reply file from its thread
-        const { posts: oldPosts, ...otherProps } = thread;
+            // Remove the reply file from its thread
+            const { posts: oldPosts, ...otherProps } = thread;
 
-        const updatedThread = {
-            ...otherProps,
-            posts: oldPosts.map((p) =>
-                p.id === post.id ? { ...p, file: undefined } : p
-            ),
-        };
+            const updatedThread = {
+                ...otherProps,
+                posts: oldPosts.map((p) =>
+                    p.id === post.id ? { ...p, file: undefined } : p
+                ),
+            };
 
-        mutate(updatedThread, false);
-    };
+            mutate(updatedThread, false);
+        },
+        [board, mutate, thread, token]
+    );
 
     return { thread, create, reply, deletePost, deletePostFile };
 }

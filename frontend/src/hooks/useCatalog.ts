@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import useSWR from "swr";
 
 import { Board, ThreadForm } from "../types";
@@ -14,20 +15,23 @@ export default function useCatalog(board?: Board) {
         }
     );
 
-    const create = async (form: ThreadForm) => {
-        if (!board) {
-            throw new Error("Board is not defined");
-        }
+    const create = useCallback(
+        async (form: ThreadForm) => {
+            if (!board) {
+                throw new Error("Board is not defined");
+            }
 
-        const createdThread = await threadsService.create(board, form);
-        mutate(
-            (threads) =>
-                threads ? [createdThread, ...threads] : [createdThread],
-            false
-        );
+            const createdThread = await threadsService.create(board, form);
+            mutate(
+                (threads) =>
+                    threads ? [createdThread, ...threads] : [createdThread],
+                false
+            );
 
-        return createdThread;
-    };
+            return createdThread;
+        },
+        [board, mutate]
+    );
 
     return { threads: data, create };
 }
