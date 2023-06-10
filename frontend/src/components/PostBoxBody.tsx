@@ -11,14 +11,16 @@ interface PostBoxBodyProps {
     thread?: Thread;
     post: Post;
     quotePost?: (postNumber: number) => void;
+    deletePost?: (post: Post) => Promise<void>;
+    deletePostFile?: (post: Post) => Promise<void>;
 }
-
-// TODO: Needs refactor
 
 export default function PostBoxBody({
     thread,
     post,
     quotePost,
+    deletePost,
+    deletePostFile,
 }: PostBoxBodyProps) {
     const board = useBoard();
     const popupRef = useRef<HTMLDivElement>(null);
@@ -29,8 +31,6 @@ export default function PostBoxBody({
         (state) => state.authorizedUser?.role === "SOPSY"
     );
     const imageboardConfig = useStore((state) => state.imageboardConfig);
-    const deletePost = useStore((state) => state.deletePost);
-    const deleteFile = useStore((state) => state.deletePostFile);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -64,11 +64,11 @@ export default function PostBoxBody({
     };
 
     const onDeletePostClick = () => {
-        deletePost(thread, post);
+        deletePost?.(post);
     };
 
     const onDeleteFileClick = () => {
-        deleteFile(thread, post);
+        deletePostFile?.(post);
         setPopupOpen(false);
     };
 
@@ -149,6 +149,7 @@ export default function PostBoxBody({
                                     Vinkkaa
                                 </button>
                             </li>
+
                             {sysopPermissions && (
                                 <>
                                     <li>
@@ -219,4 +220,6 @@ export default function PostBoxBody({
 PostBoxBody.defaultProps = {
     thread: undefined,
     quotePost: undefined,
+    deletePost: undefined,
+    deletePostFile: undefined,
 };

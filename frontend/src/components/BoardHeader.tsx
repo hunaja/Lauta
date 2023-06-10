@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { HomeIcon, KeyIcon, PuzzleIcon } from "@heroicons/react/solid";
+
 import useBoard from "../hooks/useBoard";
 import useStore from "../hooks/useStore";
+import useBoards from "../hooks/useBoards";
 
 interface BoardHeaderProps {
     showBoardHeader?: boolean;
@@ -10,8 +12,10 @@ interface BoardHeaderProps {
 
 export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
     const currentBoard = useBoard();
-    const boards = useStore((state) => state.boards);
+    const { boards } = useBoards();
     const authorizedUser = useStore((state) => state.authorizedUser);
+
+    if (!boards) return null;
 
     return (
         <header>

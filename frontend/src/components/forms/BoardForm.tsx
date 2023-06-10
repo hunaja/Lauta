@@ -8,7 +8,7 @@ interface BoardFormProps {
     buttonText: string;
     onSubmit: (board: BoardWithoutId) => void;
 }
-//
+
 export default function BoardForm({
     oldBoard,
     buttonText,

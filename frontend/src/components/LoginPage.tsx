@@ -1,6 +1,7 @@
 import React from "react";
 import Helmet from "react-helmet";
 import { Navigate } from "react-router";
+
 import useStore from "../hooks/useStore";
 
 import LoginForm from "./forms/LoginForm";
@@ -10,7 +11,6 @@ import FrontPageLayout from "./FrontPageLayout";
 
 export default function LoginPage() {
     const userAuthenticated = useStore((state) => !!state.authorizedUser);
-
     if (userAuthenticated) return <Navigate to="/" />;
 
     return (

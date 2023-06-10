@@ -12,7 +12,7 @@
         "plugin:@typescript-eslint/recommended",
         "prettier"
     ],
-    "plugins": ["react", "@typescript-eslint", "prettier"],
+    "plugins": ["react", "@typescript-eslint"],
     "settings": {
         "react": {
             "pragma": "React",
@@ -26,6 +26,7 @@
         "react/jsx-filename-extension": [2, { "extensions": [".tsx"] }],
         "default-param-last": 0,
         "no-param-reassign": 0,
-        "react/jsx-props-no-spreading": 0
+        "react/jsx-props-no-spreading": 0,
+        "react/prop-types": 0
     }
 }

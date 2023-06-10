@@ -1,32 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useLocation, useParams } from "react-router";
+
 import useBoard from "../hooks/useBoard";
-import useStore from "../hooks/useStore";
 
 import BoardHeader from "./BoardHeader";
-import NotFoundPage from "./NotFoundPage";
-import ReplyForm, { ReplyFormRef } from "./forms/ReplyForm";
+// import NotFoundPage from "./NotFoundPage";
+import ReplyForm, { Ref as ReplyFormRef } from "./forms/ReplyForm";
 import PostBoxBody from "./PostBoxBody";
+import useThread from "../hooks/useThread";
 
 export default function ThreadPage() {
+    const replyFormRef = useRef<ReplyFormRef>(null);
+
     const { hash } = useLocation();
+    const { threadNumber: threadNumberStr } = useParams();
+    const threadNumber = Number(threadNumberStr);
+
     const hashNumber = Number(hash.substring(1));
     const [highlightedMessage, setHighlightedMessage] = useState(
         !Number.isNaN(hashNumber) ? hashNumber : null
     );
-    const replyFormRef = useRef<ReplyFormRef>(null);
-    const [loading, setLoading] = useState(true);
+
     const board = useBoard();
-    const { threadNumber } = useParams();
-    const fetchThreadByNumber = useStore((state) => state.fetchThreadByNumber);
-    const thread = useStore((state) =>
-        state.threads.find((t) => t.number === Number(threadNumber))
-    );
-    const unloadPreviews = useStore((state) => state.refreshPreviews);
-    const boardNotLoaded = useStore(
-        (state) => board && !state.loadedBoards.includes(board.id)
-    );
+    const {
+        thread,
+        reply: replyTigger,
+        deletePost,
+        deletePostFile,
+    } = useThread(board, threadNumber);
 
     useEffect(() => {
         if (highlightedMessage === null) return;
@@ -39,22 +41,10 @@ export default function ThreadPage() {
         return () => clearTimeout(clearHighlightedMessage);
     }, [highlightedMessage]);
 
-    useEffect(() => {
-        if (!board || boardNotLoaded) return;
-
-        unloadPreviews(board);
-    }, [board, boardNotLoaded, unloadPreviews]);
-
-    useEffect(() => {
-        if (!board || !threadNumber || !loading) return;
-
-        fetchThreadByNumber(board, Number(threadNumber))
-            .then(() => setLoading(false))
-            .catch(() => setLoading(false));
-    }, [board, thread, threadNumber, fetchThreadByNumber, loading]);
-
     if (!board || !threadNumber) return null;
-    if (!thread) return loading ? <p>Ladataan...</p> : <NotFoundPage />;
+
+    // TODO: Show loading indicator
+    if (!thread) return <p>Ladataan...</p>;
 
     const quotePost = (postId: number) => {
         replyFormRef?.current?.quotePost(postId);
@@ -96,6 +86,8 @@ export default function ThreadPage() {
                                     thread={thread}
                                     post={opPost}
                                     quotePost={quotePost}
+                                    deletePost={deletePost}
+                                    deletePostFile={deletePostFile}
                                 />
                                 <div className="clear-both sm:clear-none" />
                             </div>
@@ -117,16 +109,21 @@ export default function ThreadPage() {
                                     thread={thread}
                                     post={reply}
                                     quotePost={quotePost}
+                                    deletePost={deletePost}
+                                    deletePostFile={deletePostFile}
                                 />
                             </div>
                             <br />
                         </React.Fragment>
                     ))}
 
-                    {loading ? (
+                    {!replies ? (
                         <i>Ladataan vastauksia...</i>
                     ) : (
-                        <ReplyForm thread={thread} ref={replyFormRef} />
+                        <ReplyForm
+                            replyThread={replyTigger}
+                            ref={replyFormRef}
+                        />
                     )}
                 </article>
             </main>

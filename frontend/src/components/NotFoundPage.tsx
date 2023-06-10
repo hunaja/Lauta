@@ -1,7 +1,8 @@
-import { ArrowNarrowLeftIcon } from "@heroicons/react/solid";
 import React from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router";
+import { ArrowNarrowLeftIcon } from "@heroicons/react/solid";
+
 import FrontPageBox from "./FrontPageBox";
 import FrontPageBoxHeader from "./FrontPageBoxHeader";
 import FrontPageLayout from "./FrontPageLayout";

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { XIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
+import useSWR from "swr";
+
 import { BoardWithoutId, Board } from "../types";
 import useStore from "../hooks/useStore";
 
@@ -9,29 +11,34 @@ import BoardForm from "./forms/BoardForm";
 import FrontPageLayout from "./FrontPageLayout";
 import FrontPageBox from "./FrontPageBox";
 import FrontPageBoxHeader from "./FrontPageBoxHeader";
+import imageboardService from "../services/imageboardService";
+import useBoards from "../hooks/useBoards";
 
-export default function IndexPage() {
+export default function FrontPage() {
     const [editMode, setEditMode] = useState(false);
     const [newBoard, setNewBoard] = useState(false);
     const [editBoard, setEditBoard] = useState<Board | null>(null);
-    const boards = useStore((state) => state.boards);
     const loggedIn = useStore((state) => !!state.authorizedUser);
-    const createBoard = useStore((state) => state.createBoard);
-    const updateBoard = useStore((state) => state.updateBoard);
-    const deleteBoard = useStore((state) => state.deleteBoard);
-    const latestImages = useStore((state) => state.latestImages);
-    const initializeLatestImages = useStore(
-        (state) => state.initializeLatestImages
-    );
     const thumbnailPath = useStore(
         (state) => state.imageboardConfig?.thumbnailPath
     );
 
-    useEffect(() => {
-        initializeLatestImages();
-    }, [initializeLatestImages]);
+    const { data: latestImages } = useSWR(
+        "/api/latest-images",
+        imageboardService.getLatestImages,
+        {
+            refreshInterval: 10000,
+        }
+    );
 
-    if (!thumbnailPath) return null;
+    const {
+        boards,
+        create: createBoard,
+        update: updateBoard,
+        remove: removeBoard,
+    } = useBoards();
+
+    if (!boards) return null;
 
     const handleClose = () => {
         if (editBoard) {
@@ -67,7 +74,7 @@ export default function IndexPage() {
     const handleBoardDelete = async () => {
         if (!editBoard) return;
 
-        await deleteBoard(editBoard);
+        await removeBoard(editBoard);
         setEditBoard(null);
     };
 
@@ -152,7 +159,7 @@ export default function IndexPage() {
                                 <p>
                                     Tämä toiminto poistaa alalaudan
                                     {` ${editBoard.name} `}
-                                    peruuttomattomasti. Harkitse vielä kerran.
+                                    peruuttamattomasti. Harkitse vielä kerran.
                                 </p>
                                 <div className="flex justify-end mt-1">
                                     <button
@@ -204,31 +211,26 @@ export default function IndexPage() {
                     </ul>
                 </FrontPageBox>
 
-                <FrontPageBox>
-                    <FrontPageBoxHeader>
-                        <h3>Uusimmat kuvat</h3>
-                    </FrontPageBoxHeader>
+                {latestImages && (
+                    <FrontPageBox>
+                        <FrontPageBoxHeader>
+                            <h3>Uusimmat kuvat</h3>
+                        </FrontPageBoxHeader>
 
-                    {!latestImages && <p>Ladataan...</p>}
-
-                    {latestImages && (
                         <ul className="grid grid-cols-5 gap-4">
                             {latestImages.map((image) => (
                                 <li key={image.id}>
                                     <Link to={`/post/${image.postNumber}`}>
                                         <img
                                             src={`${thumbnailPath}/${image.id}.png`}
-                                            alt=""
+                                            alt={image.name}
                                         />
-                                        <span className="text-gray-500 text-xs break-words">
-                                            {image.name}
-                                        </span>
                                     </Link>
                                 </li>
                             ))}
                         </ul>
-                    )}
-                </FrontPageBox>
+                    </FrontPageBox>
+                )}
             </FrontPageLayout>
         </>
     );

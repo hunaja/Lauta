@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ImagePreview } from "../types";
 
 const baseUrl = "/api/imageboard";
 
@@ -8,13 +9,15 @@ const getImageboardConfig = async () => {
 };
 
 const getLatestImages = async () => {
-    const response = await axios.get(`${baseUrl}/latest-images`);
+    const response = await axios.get<ImagePreview[]>(
+        `${baseUrl}/latest-images`
+    );
     return response.data;
 };
 
-const actions = {
+const imageboardService = {
     getImageboardConfig,
     getLatestImages,
 };
 
-export default actions;
+export default imageboardService;

@@ -34,7 +34,7 @@ export interface Post {
 export interface Thread {
     id: string;
     number: number;
-    board: string; // Board ID
+    board: string;
     title: string;
     fileReplyCount: number;
     replyCount: number;
@@ -90,34 +90,7 @@ export interface ImagePreview {
 
 export interface ImageboardSlice {
     imageboardConfig: ImageboardConfig | null;
-    latestImages: ImagePreview[] | null;
     initializeImageboard: () => Promise<void>;
-    initializeLatestImages: () => Promise<void>;
-}
-
-export interface BoardsSlice {
-    boards: Board[];
-    initializeBoards: () => Promise<void>;
-    createBoard: (boardWithoutId: BoardWithoutId) => Promise<void>;
-    updateBoard: (board: Board) => Promise<void>;
-    deleteBoard: (board: Board) => Promise<void>;
-}
-
-export interface ThreadsSlice {
-    threads: Thread[];
-    /** Ids of the boards that have been loaded. */
-    loadedBoards: string[];
-    loadPreviews: (board: Board, pageNumber?: number) => Promise<void>;
-    refreshPreviews: (board: Board) => void;
-    createThread: (board: Board, threadForm: ThreadForm) => Promise<Thread>;
-    fetchThreadByNumber: (
-        board: Board,
-        threadNumber: number
-    ) => Promise<Thread>;
-    replyThread: (thread: Thread, postForm: PostForm) => Promise<void>;
-    loadThreadWithPost: (postNumber: number) => Promise<void>;
-    deletePost: (thread: Thread, post: Post) => Promise<void>;
-    deletePostFile: (thread: Thread, post: Post) => Promise<void>;
 }
 
 export interface AuthSlice {
@@ -125,19 +98,7 @@ export interface AuthSlice {
     initializeAuth: () => void;
     login: (loginForm: LoginForm) => Promise<void>;
     logout: () => void;
-}
-
-export interface UsersSlice {
-    users: Array<User>;
-    initializeUsers: () => Promise<void>;
-    createUser: (userForm: UserForm) => Promise<void>;
     changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
-    editUser: (userId: string, userForm: UserForm) => Promise<void>;
-    deleteUser: (id: string) => Promise<void>;
 }
 
-export type Store = ImageboardSlice &
-    BoardsSlice &
-    ThreadsSlice &
-    AuthSlice &
-    UsersSlice;
+export type Store = ImageboardSlice & AuthSlice;

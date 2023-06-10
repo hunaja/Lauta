@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import useStore from "./hooks/useStore";
+import RedirectToPost from "./components/RedirectToPost";
+import useBoards from "./hooks/useBoards";
 
 import HandleBoard from "./components/HandleBoard";
 import BoardIndex from "./components/BoardIndex";
@@ -12,16 +14,15 @@ import ThreadPage from "./components/ThreadPage";
 import LoginPage from "./components/LoginPage";
 import DashboardPage from "./components/DashboardPage";
 import RequireAuth from "./components/RequireAuth";
-import RedirectToPost from "./components/RedirectToPost";
 
 function App() {
-    const [boardsLoading, setBoardsLoading] = useState(true);
     const [imageboardDataLoading, setImageboardDataLoading] = useState(true);
     const initializeAuth = useStore((state) => state.initializeAuth);
     const initializeImageboard = useStore(
         (state) => state.initializeImageboard
     );
-    const initializeBoards = useStore((state) => state.initializeBoards);
+
+    const { boards } = useBoards();
 
     useEffect(() => {
         initializeImageboard()
@@ -33,13 +34,7 @@ function App() {
         initializeAuth();
     }, [initializeAuth]);
 
-    useEffect(() => {
-        initializeBoards().then(() => setBoardsLoading(false));
-    }, [initializeBoards, setBoardsLoading]);
-
-    if (boardsLoading || imageboardDataLoading) {
-        return null;
-    }
+    if (!boards || imageboardDataLoading) return null;
 
     return (
         <>

@@ -1,9 +1,12 @@
 import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
-import useStore from "../../hooks/useStore";
 
-export default function ChangePasswordForm() {
+export type Props = {
+    changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
+};
+
+export default function ChangePasswordForm({ changePassword }: Props) {
     const {
         register,
         getValues,
@@ -11,7 +14,6 @@ export default function ChangePasswordForm() {
         setError,
         formState: { errors },
     } = useForm();
-    const changePassword = useStore((state) => state.changePassword);
 
     const handleFormSubmit: SubmitHandler<FieldValues> = ({
         newPassword,

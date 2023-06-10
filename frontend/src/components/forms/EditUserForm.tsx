@@ -3,28 +3,29 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
 
 import { UserForm } from "../../types";
-import useStore from "../../hooks/useStore";
 import roles, { defaultRole as imageboardDefaultRole } from "../../roles";
 
-// TODO: Refactor these
-interface EditUserFormProps {
+interface Props {
     id: string;
     defaultUsername: string;
     defaultRole: string;
+    editUser: (id: string, user: UserForm) => Promise<void>;
+    callback: () => void;
 }
 
 export default function EditUserForm({
     id,
     defaultUsername,
     defaultRole,
-}: EditUserFormProps) {
+    editUser,
+    callback,
+}: Props) {
     const { register, handleSubmit } = useForm({
         defaultValues: {
             username: defaultUsername,
             role: roles.find((r) => r.name === defaultRole)?.pretty,
         },
     });
-    const editUser = useStore((state) => state.editUser);
 
     const handleFormSubmit: SubmitHandler<FieldValues> = (data) => {
         editUser(id, {
@@ -32,7 +33,9 @@ export default function EditUserForm({
             role:
                 roles.find((r) => r.pretty === data.role)?.name ??
                 imageboardDefaultRole.name,
-        } as UserForm);
+        } as UserForm).then(() => {
+            callback();
+        });
     };
 
     return (

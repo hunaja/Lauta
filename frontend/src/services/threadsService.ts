@@ -34,12 +34,6 @@ const getThreadByNumber = async (number: number): Promise<Thread> => {
     return response.data;
 };
 
-// Temp solution
-const getThreadWithPost = async (number: number): Promise<Thread> => {
-    const response = await axios.get(`/api/threads/withReplyNumber/${number}`);
-    return response.data;
-};
-
 const reply = async (thread: Thread, postForm: PostForm): Promise<Post> => {
     const formData = new FormData();
     formData.append("text", postForm.text);
@@ -75,14 +69,13 @@ const deletePostFile = async (jwtToken: string, post: Post): Promise<void> => {
     });
 };
 
-const actions = {
+const threadsService = {
     getPreviews,
     create,
     getThreadByNumber,
-    getThreadWithPost,
     reply,
     deletePost,
     deletePostFile,
 };
 
-export default actions;
+export default threadsService;

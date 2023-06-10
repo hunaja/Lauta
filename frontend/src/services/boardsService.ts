@@ -34,11 +34,11 @@ const remove = async (token: string, board: Board): Promise<void> => {
     });
 };
 
-const actions = {
+const boardsService = {
     getAll,
     create,
     update,
     remove,
 };
 
-export default actions;
+export default boardsService;

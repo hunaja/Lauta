@@ -5,7 +5,7 @@ import {
     UserAddIcon,
     XIcon,
 } from "@heroicons/react/solid";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 
 import useStore from "../hooks/useStore";
@@ -18,22 +18,19 @@ import CreateUserForm from "./forms/CreateUserForm";
 import FrontPageBox from "./FrontPageBox";
 import FrontPageBoxHeader from "./FrontPageBoxHeader";
 import FrontPageLayout from "./FrontPageLayout";
+import useUsers from "../hooks/useUsers";
 
-export default function UserPage() {
+export default function DashboardPage() {
     const [editingPassword, setEditingPassword] = useState(false);
     const [editingUsers, setEditingUsers] = useState(false);
     const [creatingUser, setCreatingUser] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+
     const authorizedUser = useStore((state) => state.authorizedUser);
     const logout = useStore((state) => state.logout);
-    const users = useStore((state) => state.users); // TODO: Sort by roles
-    const initializeUsers = useStore((state) => state.initializeUsers);
+    const changePassword = useStore((state) => state.changePassword);
 
-    useEffect(() => {
-        if (users.length !== 0 || authorizedUser?.role !== "SOPSY") return;
-
-        initializeUsers();
-    }, [users, initializeUsers, authorizedUser]);
+    const { users, create: createUser, update: editUser } = useUsers();
 
     if (!authorizedUser) return null;
 
@@ -52,6 +49,10 @@ export default function UserPage() {
         setEditingUsers(!editingUsers);
     };
     const startCreatingUser = () => setCreatingUser(true);
+
+    const editCallback = () => {
+        setEditingUser(null);
+    };
 
     return (
         <>
@@ -103,14 +104,16 @@ export default function UserPage() {
                     {editingPassword && (
                         <div className="m-1 p-1 border-2 border-gray-100">
                             <h3 className="text-xl">Vaihda salasanasi</h3>
-                            <ChangePasswordForm />
+                            <ChangePasswordForm
+                                changePassword={changePassword}
+                            />
                         </div>
                     )}
 
                     <p>Tervetuloa Laudan hallintapaneeliin.</p>
                 </FrontPageBox>
 
-                {authorizedUser.role === "SOPSY" && (
+                {authorizedUser.role === "SOPSY" && users && (
                     <FrontPageBox>
                         <FrontPageBoxHeader>
                             <h3>Käyttäjät</h3>
@@ -153,7 +156,7 @@ export default function UserPage() {
                         {creatingUser && (
                             <div className="m-1 p-1 border-2 border-gray-100">
                                 <h3 className="text-xl">Lisää käyttäjä</h3>
-                                <CreateUserForm />
+                                <CreateUserForm createUser={createUser} />
                             </div>
                         )}
 
@@ -164,6 +167,8 @@ export default function UserPage() {
                                     id={editingUser.id}
                                     defaultRole={editingUser.role}
                                     defaultUsername={editingUser.username}
+                                    editUser={editUser}
+                                    callback={editCallback}
                                 />
                             </div>
                         )}
@@ -176,7 +181,7 @@ export default function UserPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map((u) => (
+                                {users?.map((u) => (
                                     <tr key={u.id}>
                                         <td>{u.username}</td>
                                         <td>

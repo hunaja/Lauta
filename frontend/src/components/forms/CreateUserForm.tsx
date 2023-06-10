@@ -2,13 +2,15 @@ import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { UserAddIcon } from "@heroicons/react/solid";
 
-import { UserForm } from "../../types";
-import useStore from "../../hooks/useStore";
+import { User, UserForm } from "../../types";
 import roles, { defaultRole } from "../../roles";
 
-export default function CreateUserForm() {
+type Props = {
+    createUser: (user: UserForm) => Promise<User>;
+};
+
+export default function CreateUserForm({ createUser }: Props) {
     const { register, watch, handleSubmit, reset } = useForm();
-    const createUser = useStore((state) => state.createUser);
 
     const handleFormSubmit: SubmitHandler<FieldValues> = (data) => {
         createUser({

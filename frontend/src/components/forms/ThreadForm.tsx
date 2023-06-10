@@ -6,14 +6,19 @@ import React, {
 } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import useBoard from "../../hooks/useBoard";
-import useStore from "../../hooks/useStore";
 
-export interface ThreadFormRef {
+import { Board, Thread, ThreadForm as ThreadFormType } from "../../types";
+
+export interface Ref {
     focusTextarea: () => void;
 }
 
-const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
+export interface Props {
+    board: Board;
+    trigger: (form: ThreadFormType) => Promise<Thread>;
+}
+
+const ThreadForm = forwardRef<Ref, Props>(({ board, trigger }, ref) => {
     const {
         register,
         setFocus,
@@ -21,8 +26,6 @@ const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
         setError,
         formState: { errors },
     } = useForm();
-    const board = useBoard();
-    const createThread = useStore((state) => state.createThread);
     const navigate = useNavigate();
 
     const focusTextarea = useCallback(() => {
@@ -35,10 +38,8 @@ const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
 
     useImperativeHandle(ref, () => ({ focusTextarea }));
 
-    if (!board) return null;
-
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        const thread = {
+        const form: ThreadFormType = {
             title: data.title,
             post: {
                 author: data.author,
@@ -48,7 +49,7 @@ const ThreadForm = forwardRef<ThreadFormRef>((_, ref) => {
             },
         };
 
-        createThread(board, thread)
+        trigger(form)
             .then((createdThread) =>
                 navigate(`/${board.path}/${createdThread.number}`)
             )
