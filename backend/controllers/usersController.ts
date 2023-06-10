@@ -78,7 +78,8 @@ router.put(
 
         targetUser.username = body.username;
         targetUser.role = body.role;
-        await targetUser.save();
+        const user = await targetUser.save();
+        res.status(200).json(user);
     }
 );
 
@@ -88,6 +89,7 @@ router.delete(
     requireMinRole(UserRole.ADMIN),
     async (req: Request, res: Response) => {
         await User.findByIdAndDelete(req.params.id);
+        res.sendStatus(204);
     }
 );
 
