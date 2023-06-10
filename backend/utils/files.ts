@@ -2,6 +2,9 @@ import { Client } from "minio";
 import sharp from "sharp";
 
 import config from "./config.js";
+import { UploadedFile } from "../types.js";
+import { PostFile } from "../models/PostFile.js";
+import { Post } from "../models/Post.js";
 
 const baseUrl = `http://${config.minioHost}:${config.minioPort}`;
 
@@ -25,7 +28,7 @@ const client = new Client({
     useSSL: false,
 });
 
-export const initializeFiles = async () => {
+const initializeFiles = async () => {
     const promises = Object.keys(buckets).map(async (name) => {
         const fullName = buckets[name];
 
@@ -51,19 +54,13 @@ export const initializeFiles = async () => {
             })
         );
     });
+
     return Promise.all(promises);
 };
 
-export const uploadFile = async (post, file, opPost = false) => {
-    const postFile = {
-        size: Math.floor(file.size / 1000),
-        name: file.originalname,
-        mimeType: file.actualMimetype,
-        location: `${post._id}.${file.actualExt || "unknown"}`,
-    };
-
+const uploadFile = async (post, file: UploadedFile, opPost = false) => {
     const uploadPromises = [
-        client.putObject(buckets.files, postFile.location, file.buffer),
+        client.putObject(buckets.files, post.file.location, file.buffer),
     ];
 
     // Creating a thumbnail for the post by resizing the original image
@@ -81,6 +78,7 @@ export const uploadFile = async (post, file, opPost = false) => {
             .resize(295, 295)
             .toFormat("png")
             .toBuffer();
+
         uploadPromises.push(
             client.putObject(
                 buckets.opthumbnails,
@@ -91,10 +89,9 @@ export const uploadFile = async (post, file, opPost = false) => {
     }
 
     await Promise.all(uploadPromises);
-    return postFile;
 };
 
-export const deleteFile = async (post, opPost = false) => {
+const deleteFile = async (post, opPost = false) => {
     const deletePromises = [
         client.removeObject(buckets.files, post.file.location),
         client.removeObject(buckets.thumbnails, `${post._id}.png`),
@@ -108,5 +105,14 @@ export const deleteFile = async (post, opPost = false) => {
     await Promise.all(deletePromises);
 };
 
-export const getFileBuffer = async (post) =>
-    client.getObject(buckets.files, post.file.location);
+const getFileBuffer = async (post) => {
+    if (!post.file) throw new Error("Post has no file");
+    return client.getObject(buckets.files, post.file.location);
+};
+
+export default {
+    initializeFiles,
+    uploadFile,
+    deleteFile,
+    getFileBuffer,
+};

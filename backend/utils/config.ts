@@ -12,7 +12,7 @@ export default {
     hashRounds: 10,
 
     minioHost: process.env.MINIO_HOST ?? "localhost",
-    minioPort: process.env.MINIO_PORT ?? 9000,
+    minioPort: Number(process.env.MINIO_PORT ?? 9000),
     minioAccessKey: process.env.MINIO_ACCESS_KEY!,
     minioSecretKey: process.env.MINIO_SECRET_KEY!,
     minioBucketPrefix: process.env.MINIO_BUCKET_PREFIX ?? "luchan",

@@ -44,12 +44,15 @@ const validateExtension = async (
 
         if (unallowedExtension)
             return res.status(400).json({
-                error: "Antamasi tiedostomuotoa ei tueta.",
+                error: "Antamaasi tiedostomuotoa ei tueta.",
                 field: "file",
             });
 
-        req.file.actualMimetype = fileData.mime;
-        req.file.actualExt = fileData.ext;
+        req.uploadedFile = {
+            ...file,
+            actualMimetype: fileData.mime,
+            actualExt: fileData.ext,
+        };
     }
 
     next();

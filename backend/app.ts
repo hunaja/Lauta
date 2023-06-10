@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-import { initializeFiles } from "./utils/files.js";
+import filesService from "./utils/files.js";
 import config from "./utils/config.js";
 import errorHandler from "./utils/errorHandlerMiddleware.js";
 import { extractToken } from "./utils/authMiddleware.js";
@@ -18,7 +18,7 @@ import usersController from "./controllers/usersController.js";
 
 const app = express();
 
-initializeFiles().then(() => console.log("Configured Minio."));
+filesService.initializeFiles().then(() => console.log("Configured Minio."));
 
 mongoose
     .connect(config.mongoUri)

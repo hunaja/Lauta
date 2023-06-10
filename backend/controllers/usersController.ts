@@ -8,14 +8,19 @@ import User from "../models/User.js";
 import { UserRole } from "../types.js";
 import InsufficientPermissionsError from "../errors/InsufficentPermissionsError.js";
 import NotFoundError from "../errors/NotFoundError.js";
+import InsufficentPermissionsError from "../errors/InsufficentPermissionsError.js";
 
 const router = Router();
 
 // Getting all users
-router.get("/", requireMinRole(UserRole.ADMIN), async (req, res) => {
-    const users = await User.find({});
-    res.json(users);
-});
+router.get(
+    "/",
+    requireMinRole(UserRole.ADMIN),
+    async (req: Request, res: Response) => {
+        const users = await User.find({});
+        res.json(users);
+    }
+);
 
 // Creating a new user
 router.post("/", extractUser, async (req, res) => {
@@ -49,7 +54,7 @@ router.post("/:id/password", extractUser, async (req, res) => {
         targetUser &&
         (await bcrypt.compare(oldPassword, targetUser.passwordHash));
     if (!oldCorrect)
-        return res.status(403).json({ error: "Virheellinen vanha salasana." });
+        return new InsufficentPermissionsError("Väärä entinen salasana.");
 
     targetUser.passwordHash = await bcrypt.hash(newPassword, config.hashRounds);
     await targetUser.save();

@@ -13,9 +13,15 @@ declare global {
         export interface Request {
             token?: string;
             session?: Session;
+            uploadedFile?: UploadedFile;
         }
     }
 }
+
+export type UploadedFile = {
+    actualMimetype: string;
+    actualExt: string;
+} & Express.Multer.File;
 
 export type Session = {
     id: User["id"];

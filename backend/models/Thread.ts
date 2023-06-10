@@ -1,18 +1,18 @@
-import mongoose from "mongoose";
+import mongoose, { PopulatedDoc, Types } from "mongoose";
 import { Post } from "./Post";
 import { Board } from "./Board";
 
 export type Thread = {
     id: string;
     number: number;
-    board: Board | mongoose.Types.ObjectId;
+    board: PopulatedDoc<Board, mongoose.Types.ObjectId>;
     title: string;
     locked: boolean;
-    bumpedAt: Date;
+    bumpedAt: number;
     replyCount: number;
     fileReplyCount: number;
     // Post ids are either populated or ObjectId
-    posts: Post[] | mongoose.Types.ObjectId[];
+    posts: Types.Array<PopulatedDoc<Post, mongoose.Types.ObjectId>>;
 };
 
 const threadSchema = new mongoose.Schema({

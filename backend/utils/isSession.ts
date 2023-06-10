@@ -1,12 +1,13 @@
-import { Session } from "../types";
+import { Session, UserRole } from "../types";
 
 export default function isSession(s: unknown): s is Session {
     return (
         !!s &&
         typeof s === "object" &&
-        "username" in s &&
-        typeof s.username === "string" &&
+        "id" in s &&
+        typeof s.id === "string" &&
         "role" in s &&
-        typeof s.role === "string"
+        typeof s.role === "string" &&
+        Object.values(UserRole).includes(s.role as UserRole)
     );
 }

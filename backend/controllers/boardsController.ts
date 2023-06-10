@@ -1,13 +1,16 @@
 import { Request, Response, Router } from "express";
 import mongoose from "mongoose";
 
-import { extractUser, requireMinRole } from "../utils/authMiddleware.js";
+import { requireMinRole } from "../utils/authMiddleware.js";
 import Board from "../models/Board.js";
 import Post from "../models/Post.js";
 import Thread from "../models/Thread.js";
 import uploadMiddleware from "../utils/uploadMiddleware.js";
-import { uploadFile } from "../utils/files.js";
+import filesService from "../utils/files.js";
 import { UserRole } from "../types.js";
+import NotFoundError from "../errors/NotFoundError.js";
+import InvalidRequestError from "../errors/InvalidRequestError.js";
+import { PostFile } from "../models/PostFile.js";
 
 const router = Router();
 
@@ -20,7 +23,7 @@ router.get("/", async (req, res) => {
 // Getting a board by its id
 router.get("/:id", async (req, res) => {
     const board = await Board.findById(req.params.id);
-    if (!board) return res.sendStatus(404);
+    if (!board) throw new NotFoundError("Lautaa ei löytynyt.");
     res.json(board);
 });
 
@@ -43,21 +46,25 @@ router.post(
 );
 
 // Editing a board
-router.put("/:id", requireMinRole(UserRole.ADMIN), async (req, res) => {
-    // TODO: Make it possible for moderators to change board titles
-    const { body } = req;
+router.put(
+    "/:id",
+    requireMinRole(UserRole.ADMIN),
+    async (req: Request, res: Response) => {
+        // TODO: Make it possible for moderators to change board titles
+        const { body } = req;
 
-    const board = {
-        name: body.name,
-        path: body.path,
-        title: body.title,
-    };
+        const board = {
+            name: body.name,
+            path: body.path,
+            title: body.title,
+        };
 
-    const savedBoard = await Board.findByIdAndUpdate(req.params.id, board, {
-        new: true,
-    });
-    res.json(savedBoard);
-});
+        const savedBoard = await Board.findByIdAndUpdate(req.params.id, board, {
+            new: true,
+        });
+        res.json(savedBoard);
+    }
+);
 
 // Deleting a board
 router.delete(
@@ -91,51 +98,83 @@ router.post(
     async (req: Request, res: Response) => {
         const { body } = req;
 
-        const board = await Board.findById(req.params.id);
-        if (!board) return res.sendStatus(404);
-
         const { email } = body;
-        const text = req.body.text?.trim();
-        const author = req.body.author?.trim() || undefined;
+        const text = body.text?.trim();
+        const author = body.author?.trim() || undefined;
         const createdAt = Date.now();
+        const file = req.uploadedFile!;
 
-        // Both file and text are required
-        if (!req.file || !body.text?.trim()) {
-            const field = req.file ? "text" : "file";
-            return res.status(400).json({
-                error: "Lanka vaatii sekä kuvan että tekstin.",
-                field,
+        const session = await mongoose.startSession();
+
+        try {
+            const board = await Board.findById(req.params.id, null, {
+                session,
             });
+            if (!board) throw new NotFoundError("Lautaa ei löytynyt.");
+
+            // Both file and text are required
+            if (!req.file || !text) {
+                const field = req.file ? "text" : "file";
+                throw new InvalidRequestError(
+                    field,
+                    "Lanka vaatii sekä kuvan että tekstin."
+                );
+            }
+
+            const newPost = new Post(
+                {
+                    text,
+                    email,
+                    author,
+                    createdAt,
+                },
+                undefined,
+                { session }
+            );
+            const post = await newPost.save({ session });
+
+            // Create a thread for the OP post
+            const newThread = new Thread(
+                {
+                    number: post.number,
+                    board: board._id,
+                    title: body.title,
+                    posts: [post._id],
+                    bumpedAt: createdAt,
+                    createdAt,
+                },
+                undefined,
+                { session }
+            );
+            const thread = await newThread.save({ session });
+
+            const postFile: PostFile = {
+                size: Math.floor(file.size / 1000),
+                name: file.originalname,
+                mimeType: file.actualMimetype,
+                location: `${post._id}.${file.actualExt || "unknown"}`,
+                // TODO: Support spoilers
+                spoiler: false,
+            };
+
+            post.thread = thread._id;
+            post.file = postFile;
+            await post.save({ session });
+
+            await thread.populate("posts", undefined, undefined, {
+                session,
+            });
+
+            await filesService.uploadFile(post, file, true);
+            // await session.commitTransaction();
+
+            res.json(thread);
+        } catch (error) {
+            // await session.abortTransaction();
+            throw error;
+        } finally {
+            session.endSession();
         }
-
-        const newOpPost = new Post({
-            text,
-            email,
-            author,
-            createdAt,
-        });
-        const opPost = await newOpPost.save();
-
-        // Create a thread for the OP post
-        const thread = new Thread({
-            number: opPost.number,
-            board: board._id,
-            title: body.title,
-            posts: [opPost._id],
-            bumpedAt: createdAt,
-            createdAt,
-        });
-        const savedThread = await thread.save();
-
-        const postFile = await uploadFile(opPost, req.file, true);
-        opPost.file = { ...postFile, spoiler: false };
-
-        // Make the OP post point to the thread
-        opPost.thread = savedThread._id;
-
-        await opPost.save();
-        await savedThread.populate("posts");
-        res.json(savedThread);
     }
 );
 

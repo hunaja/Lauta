@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/latestImages", async (req, res) => {
+router.get("/latest-images", async (req, res) => {
     const posts = await Post.find(
         { file: { $exists: true } },
         "file createdAt number"

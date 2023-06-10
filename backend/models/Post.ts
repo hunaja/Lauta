@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { ObjectId, PopulatedDoc } from "mongoose";
 import autoIncrementFactory from "mongoose-sequence";
 
 import PostFile, { PostFile as PostFileType } from "./PostFile.js";
@@ -7,11 +7,12 @@ const AutoIncrement = autoIncrementFactory(mongoose);
 
 // Post ts interface
 export interface Post {
-    id: string;
+    _id: string;
     number: number;
     text: string;
     author?: string;
-    file?: PostFileType | ObjectId;
+    file?: PostFileType;
+    thread: PopulatedDoc<Post, mongoose.Types.ObjectId>;
     createdAt: string;
     editedAt: string | null;
     saging: boolean;
@@ -31,7 +32,6 @@ const postSchema = new mongoose.Schema({
     thread: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Thread",
-        required: true,
     },
     createdAt: { type: Date, required: true },
     editedAt: Date,

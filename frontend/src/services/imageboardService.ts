@@ -8,7 +8,7 @@ const getImageboardConfig = async () => {
 };
 
 const getLatestImages = async () => {
-    const response = await axios.get(`${baseUrl}/latestImages`);
+    const response = await axios.get(`${baseUrl}/latest-images`);
     return response.data;
 };
 
