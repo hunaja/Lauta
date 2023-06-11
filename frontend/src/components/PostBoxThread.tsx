@@ -5,23 +5,25 @@ import useBoard from "../hooks/useBoard";
 import useAuthStore from "../hooks/useAuthStore";
 import { Post, Thread, UserRole } from "../types";
 import formatTimeAgo from "../utils/formatTimeAgo";
-import renderPostContent from "../utils/renderPostContent";
+import formatPost from "../utils/formatPost";
+import PostBoxFloating from "./PostBoxFloating";
+import PostBoxFloatingFromId from "./PostBoxFloatingFromId";
 
-interface PostBoxBodyProps {
-    thread?: Thread;
+interface Props {
+    thread: Thread;
     post: Post;
     quotePost?: (postNumber: number) => void;
     deletePost?: (post: Post) => Promise<void>;
     deletePostFile?: (post: Post) => Promise<void>;
 }
 
-export default function PostBoxBody({
+export default function PostBoxThread({
     thread,
     post,
     quotePost,
     deletePost,
     deletePostFile,
-}: PostBoxBodyProps) {
+}: Props) {
     const board = useBoard();
     const popupRef = useRef<HTMLDivElement>(null);
     const [popupOpen, setPopupOpen] = useState(false);
@@ -74,6 +76,13 @@ export default function PostBoxBody({
     const toggleImageOpened = () => {
         setImageLoaded(imageOpened);
         setImageOpened(!imageOpened);
+    };
+
+    const renderPostBox = (postNumber: number) => {
+        const boxPost = thread.posts.find((p) => p.number === postNumber);
+        if (!boxPost) return <PostBoxFloatingFromId postNumber={postNumber} />;
+
+        return <PostBoxFloating thread={thread} post={boxPost} />;
     };
 
     const isOp = thread?.number === post.number;
@@ -206,14 +215,15 @@ export default function PostBoxBody({
             )}
             <div className="block overflow-hidden">
                 <h2 className="text-xl">{isOp && thread.title}</h2>
-                <blockquote>{renderPostContent(post.text)}</blockquote>
+                <blockquote>
+                    {formatPost(post.text, (id) => renderPostBox(id))}
+                </blockquote>
             </div>
         </>
     );
 }
 
-PostBoxBody.defaultProps = {
-    thread: undefined,
+PostBoxThread.defaultProps = {
     quotePost: undefined,
     deletePost: undefined,
     deletePostFile: undefined,

@@ -5,9 +5,8 @@ import { useLocation, useParams } from "react-router";
 import useBoard from "../hooks/useBoard";
 
 import BoardHeader from "./BoardHeader";
-// import NotFoundPage from "./NotFoundPage";
 import ReplyForm, { Ref as ReplyFormRef } from "./forms/ReplyForm";
-import PostBoxBody from "./PostBoxBody";
+import PostBoxBody from "./PostBoxThread";
 import useThread from "../hooks/useThread";
 
 export default function ThreadPage() {
@@ -35,7 +34,7 @@ export default function ThreadPage() {
 
         const clearHighlightedMessage = setTimeout(() => {
             setHighlightedMessage(null);
-        }, 2000);
+        }, 10000);
 
         // eslint-disable-next-line consistent-return
         return () => clearTimeout(clearHighlightedMessage);

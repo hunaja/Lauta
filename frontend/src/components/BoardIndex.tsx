@@ -14,7 +14,7 @@ import BoardHeader from "./BoardHeader";
 import ThreadForm, { Ref as ThreadFormRef } from "./forms/ThreadForm";
 import useCatalog from "../hooks/useCatalog";
 import formatTimeAgo from "../utils/formatTimeAgo";
-import renderPostContent from "../utils/renderPostContent";
+import formatPost from "../utils/formatPost";
 
 export default function BoardIndex() {
     const threadFormRef = useRef<ThreadFormRef>(null);
@@ -73,8 +73,8 @@ export default function BoardIndex() {
 
                 <div className="text-clip break-words overflow-clip shadowed grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 auto-rows-[275px] m-2">
                     {threads?.map(
-                        (thread) =>
-                            thread.posts.length > 0 && (
+                        ({ posts: [opPost], ...thread }) =>
+                            opPost && (
                                 <div
                                     className="bg-white border-2 border-purple-200 relative"
                                     key={thread.id}
@@ -83,9 +83,9 @@ export default function BoardIndex() {
                                         className="text-black"
                                         to={`/${board.path}/${thread.number}`}
                                     >
-                                        {thread.posts[0].file && (
+                                        {opPost.file && (
                                             <img
-                                                src={`/files/lauta-thumbnails/${thread.posts[0].id}.png`}
+                                                src={`/files/lauta-thumbnails/${opPost.id}.png`}
                                                 alt=""
                                                 className="mx-auto"
                                             />
@@ -94,11 +94,10 @@ export default function BoardIndex() {
                                             <h4 className="text-xl">
                                                 {thread.title}
                                             </h4>
-                                            {thread.posts[0].number ===
-                                            thread.number ? (
-                                                thread.posts[0].text &&
-                                                renderPostContent(
-                                                    thread.posts[0].text
+                                            {opPost.number === thread.number ? (
+                                                opPost.text &&
+                                                formatPost(
+                                                    opPost.text.slice(0, 100)
                                                 )
                                             ) : (
                                                 <span className="text-gray-500 bold">
@@ -111,9 +110,7 @@ export default function BoardIndex() {
 
                                     <div className="flex p-1 justify-between text-gray-400 text-sm bottom-0 left-0 bg-white w-full absolute">
                                         <span>
-                                            {formatTimeAgo(
-                                                thread.posts[0].createdAt
-                                            )}
+                                            {formatTimeAgo(opPost.createdAt)}
                                         </span>
                                         <span>
                                             <ReplyIcon className="inline-block h-3 w-3 mr-1" />

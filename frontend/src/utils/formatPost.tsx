@@ -2,7 +2,10 @@
 import React from "react";
 import PostLink from "../components/PostLink";
 
-export const renderPostLinks = (text: string) => {
+export const renderPostLinks = (
+    text: string,
+    postBox?: (postNumber: number) => JSX.Element
+) => {
     text = text.replaceAll("\r\n", "\n");
     const newText = text.slice(-1) === "\n" ? text : `${text}\n`;
     const substrings = [
@@ -14,7 +17,7 @@ export const renderPostLinks = (text: string) => {
         const postNumber = Number(postNumberStr);
 
         if (postNumber) {
-            return <PostLink postNumber={postNumber} />;
+            return <PostLink postBox={postBox} postNumber={postNumber} />;
         }
 
         if (match === "\n") {
@@ -68,4 +71,5 @@ export const renderQuotes = (elements: (string | JSX.Element)[]) =>
             return line;
         });
 
-export default (text: string) => renderQuotes(renderPostLinks(text));
+export default (text: string, postBox?: (postNumber: number) => JSX.Element) =>
+    renderQuotes(renderPostLinks(text, postBox));
