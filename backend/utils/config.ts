@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import { UserRole } from "../types";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -10,6 +11,11 @@ export default {
     mongoUri: process.env.MONGODB_URI!,
     jwtSecret: process.env.JWT_SECRET!,
     hashRounds: 10,
+    defaultUser: {
+        username: "root",
+        password: "root",
+        role: UserRole.ADMIN,
+    },
 
     minioHost: process.env.MINIO_HOST ?? "localhost",
     minioPort: Number(process.env.MINIO_PORT ?? 9000),

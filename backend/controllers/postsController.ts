@@ -10,6 +10,21 @@ import NotFoundError from "../errors/NotFoundError.js";
 
 const router = Router();
 
+router.get("/number/:number", async (req, res) => {
+    const post = await Post.findOne({
+        number: req.params.number,
+    }).populate("thread", "-posts");
+    if (!post) throw new NotFoundError("Post not found");
+
+    console.log(post);
+    console.log("Post thread:", post.thread?.toJSON());
+
+    res.json({
+        ...post.toJSON(),
+        thread: post.thread,
+    });
+});
+
 router.delete("/:id", requireMinRole(UserRole.MODERATOR), async (req, res) => {
     const session = await mongoose.startSession();
 

@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, PopulatedDoc } from "mongoose";
+import mongoose, { PopulatedDoc } from "mongoose";
 import autoIncrementFactory from "mongoose-sequence";
 
 import PostFile, { PostFile as PostFileType } from "./PostFile.js";

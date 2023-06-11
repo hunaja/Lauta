@@ -19,7 +19,7 @@ router.get("/number/:number", async (req, res) => {
     if (Number.isNaN(number)) return res.sendStatus(400);
 
     const thread = await Thread.findOne({ number }).populate("posts");
-    if (!thread) return res.sendStatus(404);
+    if (!thread) throw new NotFoundError("Thread not found");
 
     res.json(thread);
 });
@@ -27,7 +27,7 @@ router.get("/number/:number", async (req, res) => {
 // Delete a thread
 router.delete("/:id", requireMinRole(UserRole.MODERATOR), async (req, res) => {
     const thread = await Thread.findByIdAndDelete(req.params.id);
-    if (!thread) return res.sendStatus(404);
+    if (!thread) throw new NotFoundError("Thread not found");
 
     // TODO Remove the threads' posts from the database
     // res.sendStatus(202);

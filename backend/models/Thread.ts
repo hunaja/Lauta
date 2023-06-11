@@ -40,4 +40,4 @@ threadSchema.set("toJSON", {
     },
 });
 
-export default mongoose.model("Thread", threadSchema);
+export default mongoose.model<Thread>("Thread", threadSchema);

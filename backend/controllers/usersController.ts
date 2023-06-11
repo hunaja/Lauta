@@ -71,13 +71,14 @@ router.put(
         if (!targetUser) throw new NotFoundError("Käyttäjää ei löytynyt.");
 
         // Syops can't edit other syops (or themselves)
-        if (targetUser?.role === "SOPSY")
+        if (targetUser?.role === UserRole.ADMIN)
             throw new InsufficientPermissionsError(
                 "Et voi muokata toista ylläpitäjää."
             );
 
         targetUser.username = body.username;
         targetUser.role = body.role;
+
         const user = await targetUser.save();
         res.status(200).json(user);
     }
