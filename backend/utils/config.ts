@@ -21,7 +21,7 @@ export default {
     minioPort: Number(process.env.MINIO_PORT ?? 9000),
     minioAccessKey: process.env.MINIO_ACCESS_KEY!,
     minioSecretKey: process.env.MINIO_SECRET_KEY!,
-    minioBucketPrefix: process.env.MINIO_BUCKET_PREFIX ?? "luchan",
+    minioBucketPrefix: "lauta",
 
     allowedMimeTypes: ["image/jpeg", "image/gif", "image/png"],
 };

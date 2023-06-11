@@ -15,17 +15,12 @@ import ThreadForm, { Ref as ThreadFormRef } from "./forms/ThreadForm";
 import useCatalog from "../hooks/useCatalog";
 import formatTimeAgo from "../utils/formatTimeAgo";
 import renderPostContent from "../utils/renderPostContent";
-import useStore from "../hooks/useStore";
 
 export default function BoardIndex() {
     const threadFormRef = useRef<ThreadFormRef>(null);
     const [formHidden, setFormHidden] = useState(true);
     const board = useBoard();
     const { threads, create: createThread } = useCatalog(board);
-
-    const thumbnailPath = useStore(
-        (state) => state.imageboardConfig?.thumbnailPath
-    );
 
     if (!board || !threads) return null;
 
@@ -90,7 +85,7 @@ export default function BoardIndex() {
                                     >
                                         {thread.posts[0].file && (
                                             <img
-                                                src={`${thumbnailPath}/${thread.posts[0].id}.png`}
+                                                src={`/files/lauta-thumbnails/${thread.posts[0].id}.png`}
                                                 alt=""
                                                 className="mx-auto"
                                             />

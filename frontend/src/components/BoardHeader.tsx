@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { HomeIcon, KeyIcon, PuzzleIcon } from "@heroicons/react/solid";
 
 import useBoard from "../hooks/useBoard";
-import useStore from "../hooks/useStore";
+import useAuthStore from "../hooks/useAuthStore";
 import useBoards from "../hooks/useBoards";
 
 interface BoardHeaderProps {
@@ -13,7 +13,7 @@ interface BoardHeaderProps {
 export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
     const currentBoard = useBoard();
     const { boards } = useBoards();
-    const authorizedUser = useStore((state) => state.authorizedUser);
+    const authorizedUser = useAuthStore((state) => state.authorizedUser);
 
     if (!boards) return null;
 

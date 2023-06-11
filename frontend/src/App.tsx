@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import useStore from "./hooks/useStore";
+import useStore from "./hooks/useAuthStore";
 import RedirectToPost from "./components/RedirectToPost";
 import useBoards from "./hooks/useBoards";
 
@@ -16,25 +16,15 @@ import DashboardPage from "./components/DashboardPage";
 import RequireAuth from "./components/RequireAuth";
 
 function App() {
-    const [imageboardDataLoading, setImageboardDataLoading] = useState(true);
     const initializeAuth = useStore((state) => state.initializeAuth);
-    const initializeImageboard = useStore(
-        (state) => state.initializeImageboard
-    );
 
     const { boards } = useBoards();
-
-    useEffect(() => {
-        initializeImageboard()
-            .catch(() => setImageboardDataLoading(true))
-            .then(() => setImageboardDataLoading(false));
-    }, [initializeImageboard, setImageboardDataLoading]);
 
     useEffect(() => {
         initializeAuth();
     }, [initializeAuth]);
 
-    if (!boards || imageboardDataLoading) return null;
+    if (!boards) return null;
 
     return (
         <>

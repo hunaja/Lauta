@@ -92,17 +92,10 @@ export interface ImagePreview {
     postNumber: string;
 }
 
-export interface ImageboardSlice {
-    imageboardConfig: ImageboardConfig | null;
-    initializeImageboard: () => Promise<void>;
-}
-
-export interface AuthSlice {
+export interface AuthStore {
     authorizedUser: AuthorizedUser | null;
     initializeAuth: () => void;
     login: (loginForm: LoginForm) => Promise<void>;
     logout: () => void;
     changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
 }
-
-export type Store = ImageboardSlice & AuthSlice;

@@ -1,9 +1,11 @@
-import { StoreSlice } from "../hooks/useStore";
-import { LoginForm, AuthSlice } from "../types";
+import create from "zustand";
+
+import { AuthStore, LoginForm } from "../types";
 import authService from "../services/authService";
 import usersService from "../services/usersService";
 
-const createAuthSlice: StoreSlice<AuthSlice> = (set, get) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default create<AuthStore>((set, get) => ({
     authorizedUser: null,
     initializeAuth: () => {
         const jsonUser = window.localStorage.getItem("authorizedUser");
@@ -38,6 +40,4 @@ const createAuthSlice: StoreSlice<AuthSlice> = (set, get) => ({
             newPassword
         );
     },
-});
-
-export default createAuthSlice;
+}));

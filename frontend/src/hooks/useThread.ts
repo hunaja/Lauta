@@ -3,10 +3,10 @@ import useSWR from "swr";
 
 import { Board, Post, PostForm, ThreadForm } from "../types";
 import threadsService from "../services/threadsService";
-import useStore from "./useStore";
+import useAuthStore from "./useAuthStore";
 
 export default function useThread(board?: Board, threadNumber?: number) {
-    const token = useStore((state) => state.authorizedUser?.token);
+    const token = useAuthStore((state) => state.authorizedUser?.token);
 
     const { data: thread, mutate } = useSWR(
         board && threadNumber

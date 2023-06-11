@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import { XIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
 
 import { BoardWithoutId, Board } from "../types";
-import useStore from "../hooks/useStore";
+import useStore from "../hooks/useAuthStore";
 
 import BoardForm from "./forms/BoardForm";
 import FrontPageLayout from "./FrontPageLayout";
@@ -18,9 +18,6 @@ export default function FrontPage() {
     const [newBoard, setNewBoard] = useState(false);
     const [editBoard, setEditBoard] = useState<Board | null>(null);
     const loggedIn = useStore((state) => !!state.authorizedUser);
-    const thumbnailPath = useStore(
-        (state) => state.imageboardConfig?.thumbnailPath
-    );
 
     const { latestImages } = useLatestImages();
 
@@ -215,7 +212,7 @@ export default function FrontPage() {
                                 <li key={image.id}>
                                     <Link to={`/post/${image.postNumber}`}>
                                         <img
-                                            src={`${thumbnailPath}/${image.id}.png`}
+                                            src={`/files/lauta-thumbnails/${image.id}.png`}
                                             alt={image.name}
                                         />
                                     </Link>

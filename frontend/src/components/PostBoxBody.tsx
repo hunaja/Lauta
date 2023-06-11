@@ -2,7 +2,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useBoard from "../hooks/useBoard";
-import useStore from "../hooks/useStore";
+import useAuthStore from "../hooks/useAuthStore";
 import { Post, Thread } from "../types";
 import formatTimeAgo from "../utils/formatTimeAgo";
 import renderPostContent from "../utils/renderPostContent";
@@ -27,10 +27,9 @@ export default function PostBoxBody({
     const [popupOpen, setPopupOpen] = useState(false);
     const [imageOpened, setImageOpened] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
-    const sysopPermissions = useStore(
+    const sysopPermissions = useAuthStore(
         (state) => state.authorizedUser?.role === "SOPSY"
     );
-    const imageboardConfig = useStore((state) => state.imageboardConfig);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -47,7 +46,7 @@ export default function PostBoxBody({
             document.removeEventListener("mousedown", handleClickOutside);
     }, [setPopupOpen]);
 
-    if (!board || !imageboardConfig || !thread) return null;
+    if (!board || !thread) return null;
 
     const onIdClick = (
         event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -81,11 +80,9 @@ export default function PostBoxBody({
 
     const imageUrl = imageOpened
         ? `/api/posts/${post.id}/file`
-        : `${
-              isOp
-                  ? imageboardConfig.opThumbnailPath
-                  : imageboardConfig.thumbnailPath
-          }/${post.id}.png`;
+        : `/files/lauta-${isOp ? "op-thumbnails" : "thumbnails"}/${
+              post.id
+          }.png`;
 
     return (
         <>

@@ -1,13 +1,13 @@
 import React from "react";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { useNavigate } from "react-router";
-import useStore from "../../hooks/useStore";
+import useAuthStore from "../../hooks/useAuthStore";
 import { LoginForm as LoginFormType } from "../../types";
 
 export default function LoginForm() {
     const navigate = useNavigate();
     const { register, handleSubmit } = useForm();
-    const login = useStore((state) => state.login);
+    const login = useAuthStore((state) => state.login);
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         login(data as LoginFormType).then(() => navigate("/dashboard"));

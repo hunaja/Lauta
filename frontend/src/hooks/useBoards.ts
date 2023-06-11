@@ -3,7 +3,7 @@ import useSWRImmutable from "swr/immutable";
 
 import boardsService from "../services/boardsService";
 import { Board, BoardWithoutId } from "../types";
-import useStore from "./useStore";
+import useStore from "./useAuthStore";
 
 export default function useBoards() {
     const token = useStore((state) => state.authorizedUser?.token);

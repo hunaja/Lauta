@@ -2,10 +2,10 @@ import { useCallback } from "react";
 import useSWR from "swr";
 import usersService from "../services/usersService";
 import { UserForm } from "../types";
-import useStore from "./useStore";
+import useAuthStore from "./useAuthStore";
 
 export default function useUsers() {
-    const token = useStore((state) => state.authorizedUser?.token);
+    const token = useAuthStore((state) => state.authorizedUser?.token);
 
     const { data, mutate } = useSWR(
         token ? "/api/users" : null,

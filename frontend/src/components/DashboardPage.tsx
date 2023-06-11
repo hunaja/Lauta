@@ -8,7 +8,7 @@ import {
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 
-import useStore from "../hooks/useStore";
+import useStore from "../hooks/useAuthStore";
 import roles from "../roles";
 import { User } from "../types";
 

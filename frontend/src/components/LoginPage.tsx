@@ -2,7 +2,7 @@ import React from "react";
 import Helmet from "react-helmet";
 import { Navigate } from "react-router";
 
-import useStore from "../hooks/useStore";
+import useStore from "../hooks/useAuthStore";
 
 import LoginForm from "./forms/LoginForm";
 import FrontPageBox from "./FrontPageBox";

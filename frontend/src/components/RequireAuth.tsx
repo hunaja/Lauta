@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router";
-import useStore from "../hooks/useStore";
+import useAuthStore from "../hooks/useAuthStore";
 
 export default function RequireAuth() {
-    const isAuthenticated = useStore((state) => !!state.authorizedUser);
+    const isAuthenticated = useAuthStore((state) => !!state.authorizedUser);
 
     return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 }
