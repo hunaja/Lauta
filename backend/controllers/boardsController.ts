@@ -83,10 +83,14 @@ router.get("/:id/threads", async (req, res) => {
 
     const threads = await Thread.find({
         board: new mongoose.Types.ObjectId(req.params.id),
-    }).populate({
-        path: "posts",
-        perDocumentLimit,
-    });
+    })
+        .populate({
+            path: "posts",
+            perDocumentLimit,
+        })
+        .sort({
+            bumpedAt: -1,
+        });
 
     res.json(threads);
 });

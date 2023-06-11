@@ -5,7 +5,7 @@ import { Board, ThreadForm } from "../types";
 import threadsService from "../services/threadsService";
 
 export default function useCatalog(board?: Board) {
-    const { data, mutate } = useSWR(
+    const { data, mutate, error, isValidating } = useSWR(
         board ? `/api/boards/${board.id}/threads` : null,
         board ? async () => threadsService.getPreviews(board) : null,
         {
@@ -14,6 +14,10 @@ export default function useCatalog(board?: Board) {
             revalidateOnReconnect: true,
         }
     );
+
+    const update = useCallback(() => {
+        mutate();
+    }, [mutate]);
 
     const create = useCallback(
         async (form: ThreadForm) => {
@@ -33,5 +37,5 @@ export default function useCatalog(board?: Board) {
         [board, mutate]
     );
 
-    return { threads: data, create };
+    return { threads: data, update, create, error, validating: isValidating };
 }

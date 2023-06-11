@@ -19,6 +19,7 @@ router.get("/number/:number", async (req, res) => {
     res.json({
         ...post.toJSON(),
         thread: post.thread?.toJSON(),
+        file: post.file?.toJSON(), // TODO: The type of this
     });
 });
 

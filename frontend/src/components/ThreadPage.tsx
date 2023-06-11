@@ -8,6 +8,8 @@ import BoardHeader from "./BoardHeader";
 import ReplyForm, { Ref as ReplyFormRef } from "./forms/ReplyForm";
 import PostBoxBody from "./PostBoxThread";
 import useThread from "../hooks/useThread";
+import LoadingSpinner from "./LoadingSpinner";
+import NotFoundPage from "./NotFoundPage";
 
 export default function ThreadPage() {
     const replyFormRef = useRef<ReplyFormRef>(null);
@@ -27,6 +29,7 @@ export default function ThreadPage() {
         reply: replyTigger,
         deletePost,
         deletePostFile,
+        error,
     } = useThread(board, threadNumber);
 
     useEffect(() => {
@@ -42,8 +45,18 @@ export default function ThreadPage() {
 
     if (!board || !threadNumber) return null;
 
-    // TODO: Show loading indicator
-    if (!thread) return <p>Ladataan...</p>;
+    if (error) {
+        return <NotFoundPage />;
+    }
+
+    if (!thread) {
+        return (
+            <div className="h-screen w-screen flex-col flex">
+                {board && <BoardHeader />}
+                <LoadingSpinner />
+            </div>
+        );
+    }
 
     const quotePost = (postId: number) => {
         replyFormRef?.current?.quotePost(postId);

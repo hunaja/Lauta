@@ -13,7 +13,7 @@ export default function FrontPageLayout({
         <>
             <BoardHeader showBoardHeader={false} />
 
-            <div className="mx-auto sm:w-screen md:w-4/6 lg:6/12 xl:w-2/4">
+            <div className="mx-auto sm:w-screen md:w-4/6 lg:6/12 xl:w-2/4 my-10">
                 <img
                     src="/logo.png"
                     className="mx-auto h-48 w-96 text-center"

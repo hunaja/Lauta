@@ -8,7 +8,11 @@ import useAuthStore from "./useAuthStore";
 export default function useThread(board?: Board, threadNumber?: number) {
     const token = useAuthStore((state) => state.authorizedUser?.token);
 
-    const { data: thread, mutate } = useSWR(
+    const {
+        data: thread,
+        mutate,
+        error,
+    } = useSWR(
         board && threadNumber
             ? `/api/boards/${board.path}/threads/${threadNumber}`
             : null,
@@ -118,5 +122,5 @@ export default function useThread(board?: Board, threadNumber?: number) {
         [board, mutate, thread, token]
     );
 
-    return { thread, create, reply, deletePost, deletePostFile };
+    return { thread, create, reply, error, deletePost, deletePostFile };
 }

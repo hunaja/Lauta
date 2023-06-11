@@ -14,6 +14,7 @@ import ThreadPage from "./components/ThreadPage";
 import LoginPage from "./components/LoginPage";
 import DashboardPage from "./components/DashboardPage";
 import RequireAuth from "./components/RequireAuth";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 function App() {
     const initializeAuth = useStore((state) => state.initializeAuth);
@@ -24,7 +25,13 @@ function App() {
         initializeAuth();
     }, [initializeAuth]);
 
-    if (!boards) return null;
+    if (!boards) {
+        return (
+            <div className="h-screen w-screen flex-col flex">
+                <LoadingSpinner />
+            </div>
+        );
+    }
 
     return (
         <>

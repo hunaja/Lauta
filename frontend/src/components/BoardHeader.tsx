@@ -18,8 +18,8 @@ export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
     if (!boards) return null;
 
     return (
-        <header>
-            <div className="text-gray-400 p-1">
+        <header className="bg-gradient-to-b from-red-200 to-rose-50">
+            <div className="text-gray-400 px-3 pt-2">
                 {" [ "}
                 <Link to="/">
                     <HomeIcon className="inline-block h-3 w-3 mr-1" />
@@ -56,7 +56,7 @@ export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
             </div>
 
             {currentBoard && showBoardHeader && (
-                <div className="text-center">
+                <div className="text-center py-5">
                     <h1 className="text-xl">{currentBoard.name}</h1>
                     <h3 className="text-xl2">{currentBoard.title}</h3>
                 </div>

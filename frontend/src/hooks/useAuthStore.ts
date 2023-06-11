@@ -4,7 +4,6 @@ import { AuthStore, LoginForm } from "../types";
 import authService from "../services/authService";
 import usersService from "../services/usersService";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default create<AuthStore>((set, get) => ({
     authorizedUser: null,
     initializeAuth: () => {

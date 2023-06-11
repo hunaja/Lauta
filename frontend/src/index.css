@@ -2,14 +2,20 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+html,
 body {
-    @apply bg-rose-50;
+    @apply bg-rose-50 h-screen;
 }
 
 a {
     @apply text-indigo-500;
 }
 
-a:hover {
+a:hover,
+a:focus {
     @apply text-indigo-700 underline;
+}
+
+#root {
+    @apply min-h-screen;
 }

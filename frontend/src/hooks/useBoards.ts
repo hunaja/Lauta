@@ -7,7 +7,7 @@ import useStore from "./useAuthStore";
 
 export default function useBoards() {
     const token = useStore((state) => state.authorizedUser?.token);
-    const { data, mutate } = useSWRImmutable(
+    const { data, mutate, error } = useSWRImmutable(
         "/api/boards",
         boardsService.getAll
     );
@@ -58,5 +58,5 @@ export default function useBoards() {
         [mutate, token]
     );
 
-    return { boards: data, create, update, remove };
+    return { boards: data, create, update, remove, error };
 }

@@ -36,7 +36,7 @@ export default function PostBoxFloating({ thread, post }: Props) {
                 {" • "}
                 <time>{formatTimeAgo(post.createdAt)}</time>
 
-                {!isOp && post.file && (
+                {post.file && (
                     <>
                         <br />
                         <span className="text-gray-400 text-xs ml-1">{`Tiedosto: ${post.file.name}, ${post.file.size} KB`}</span>
@@ -44,7 +44,7 @@ export default function PostBoxFloating({ thread, post }: Props) {
                 )}
             </div>
 
-            {!isOp && post.file && (
+            {post.file && (
                 <>
                     {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,
                          jsx-a11y/click-events-have-key-events */}
