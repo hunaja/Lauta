@@ -2,13 +2,13 @@ import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
 
-import { UserForm } from "../../types";
-import roles, { defaultRole as imageboardDefaultRole } from "../../roles";
+import { UserForm, UserRole } from "../../types";
+import roles from "../../roles";
 
 interface Props {
     id: string;
     defaultUsername: string;
-    defaultRole: string;
+    defaultRole: UserRole;
     editUser: (id: string, user: UserForm) => Promise<void>;
     callback: () => void;
 }
@@ -23,17 +23,12 @@ export default function EditUserForm({
     const { register, handleSubmit } = useForm({
         defaultValues: {
             username: defaultUsername,
-            role: roles.find((r) => r.name === defaultRole)?.pretty,
+            role: defaultRole,
         },
     });
 
     const handleFormSubmit: SubmitHandler<FieldValues> = (data) => {
-        editUser(id, {
-            ...data,
-            role:
-                roles.find((r) => r.pretty === data.role)?.name ??
-                imageboardDefaultRole.name,
-        } as UserForm).then(() => {
+        editUser(id, data as UserForm).then(() => {
             callback();
         });
     };
@@ -51,18 +46,11 @@ export default function EditUserForm({
                     {...register("role", { required: true })}
                     className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
                 >
-                    {roles
-                        .sort((a, b) => a.weight - b.weight)
-                        .map((role) => (
-                            <option
-                                key={role.weight}
-                                defaultChecked={
-                                    role.weight === imageboardDefaultRole.weight
-                                }
-                            >
-                                {role.pretty}
-                            </option>
-                        ))}
+                    {Object.entries(roles).map(([role, pretty]) => (
+                        <option key={role} value={role}>
+                            {pretty}
+                        </option>
+                    ))}
                 </select>
 
                 <div className="flex justify-end mt-1">

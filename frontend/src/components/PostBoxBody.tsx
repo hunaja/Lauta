@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useBoard from "../hooks/useBoard";
 import useAuthStore from "../hooks/useAuthStore";
-import { Post, Thread } from "../types";
+import { Post, Thread, UserRole } from "../types";
 import formatTimeAgo from "../utils/formatTimeAgo";
 import renderPostContent from "../utils/renderPostContent";
 
@@ -27,8 +27,8 @@ export default function PostBoxBody({
     const [popupOpen, setPopupOpen] = useState(false);
     const [imageOpened, setImageOpened] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
-    const sysopPermissions = useAuthStore(
-        (state) => state.authorizedUser?.role === "SOPSY"
+    const isAdmin = useAuthStore(
+        (state) => state.authorizedUser?.role === UserRole.ADMIN
     );
 
     useEffect(() => {
@@ -80,9 +80,7 @@ export default function PostBoxBody({
 
     const imageUrl = imageOpened
         ? `/api/posts/${post.id}/file`
-        : `/files/lauta-${isOp ? "op-thumbnails" : "thumbnails"}/${
-              post.id
-          }.png`;
+        : `/files/lauta-${isOp ? "opthumbnails" : "thumbnails"}/${post.id}.png`;
 
     return (
         <>
@@ -147,7 +145,7 @@ export default function PostBoxBody({
                                 </button>
                             </li>
 
-                            {sysopPermissions && (
+                            {isAdmin && (
                                 <>
                                     <li>
                                         <button

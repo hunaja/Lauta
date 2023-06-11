@@ -2,23 +2,25 @@ import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { UserAddIcon } from "@heroicons/react/solid";
 
-import { User, UserForm } from "../../types";
-import roles, { defaultRole } from "../../roles";
+import { User, UserForm, UserRole } from "../../types";
+import roles from "../../roles";
 
 type Props = {
     createUser: (user: UserForm) => Promise<User>;
 };
 
 export default function CreateUserForm({ createUser }: Props) {
-    const { register, watch, handleSubmit, reset } = useForm();
+    const { register, watch, handleSubmit, reset } = useForm({
+        defaultValues: {
+            username: "",
+            role: UserRole.TRAINEE,
+            password: "",
+            passwordAgain: "",
+        },
+    });
 
     const handleFormSubmit: SubmitHandler<FieldValues> = (data) => {
-        createUser({
-            ...data,
-            role:
-                roles.find((r) => r.pretty === data.role)?.name ??
-                defaultRole.pretty,
-        } as UserForm).then(() => reset());
+        createUser(data as UserForm).then(() => reset());
     };
 
     return (
@@ -34,16 +36,11 @@ export default function CreateUserForm({ createUser }: Props) {
                     {...register("role", { required: true })}
                     className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
                 >
-                    {roles
-                        .sort((a, b) => a.weight - b.weight)
-                        .map((role) => (
-                            <option
-                                key={role.weight}
-                                defaultChecked={role.weight === 1}
-                            >
-                                {role.pretty}
-                            </option>
-                        ))}
+                    {Object.entries(roles).map(([role, pretty]) => (
+                        <option key={role} value={role}>
+                            {pretty}
+                        </option>
+                    ))}
                 </select>
                 <input
                     {...register("password", { required: true })}

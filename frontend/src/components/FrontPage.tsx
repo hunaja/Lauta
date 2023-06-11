@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { XIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
 
-import { BoardWithoutId, Board } from "../types";
+import { BoardWithoutId, Board, UserRole } from "../types";
 import useStore from "../hooks/useAuthStore";
 
 import BoardForm from "./forms/BoardForm";
@@ -17,7 +17,9 @@ export default function FrontPage() {
     const [editMode, setEditMode] = useState(false);
     const [newBoard, setNewBoard] = useState(false);
     const [editBoard, setEditBoard] = useState<Board | null>(null);
-    const loggedIn = useStore((state) => !!state.authorizedUser);
+    const isAdmin = useStore(
+        (state) => state.authorizedUser?.role === UserRole.ADMIN
+    );
 
     const { latestImages } = useLatestImages();
 
@@ -110,7 +112,7 @@ export default function FrontPage() {
                                 type="button"
                                 onClick={() => handleClose()}
                             >
-                                {loggedIn &&
+                                {isAdmin &&
                                     (!editMode ? (
                                         <>
                                             <PencilIcon className="inline-block h-3 w-3" />

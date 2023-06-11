@@ -89,7 +89,17 @@ router.delete(
     "/:id",
     requireMinRole(UserRole.ADMIN),
     async (req: Request, res: Response) => {
-        await User.findByIdAndDelete(req.params.id);
+        const target = await User.findById(req.params.id);
+        if (!target) throw new NotFoundError("Käyttäjää ei löytynyt.");
+
+        // Syops can't delete other syops (or themselves)
+        if (target?.role === UserRole.ADMIN)
+            throw new InsufficientPermissionsError(
+                "Et voi poistaa toista ylläpitäjää."
+            );
+
+        await target.remove();
+
         res.sendStatus(204);
     }
 );

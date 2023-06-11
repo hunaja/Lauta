@@ -1,9 +1,7 @@
-export type RoleStr = "SOPSY" | "MODERATOR" | "JANNY";
-
-export interface Role {
-    name: RoleStr;
-    weight: number;
-    pretty: string;
+export enum UserRole {
+    ADMIN = "SOPSY",
+    MODERATOR = "MODERATOR",
+    TRAINEE = "JANNY",
 }
 
 export interface Board {
@@ -49,7 +47,7 @@ export interface PostPreview extends Post {
 export interface User {
     id: string;
     username: string;
-    role: RoleStr;
+    role: UserRole;
 }
 
 export type UserWithoutId = Omit<User, "id">;
@@ -77,7 +75,7 @@ export interface LoginForm {
 
 export interface UserForm {
     username: string;
-    role: RoleStr;
+    role: UserRole;
 }
 
 export interface ImageboardConfig {

@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet";
 
 import useStore from "../hooks/useAuthStore";
 import roles from "../roles";
-import { User } from "../types";
+import { User, UserRole } from "../types";
 
 import EditUserForm from "./forms/EditUserForm";
 import ChangePasswordForm from "./forms/ChangePasswordForm";
@@ -63,10 +63,9 @@ export default function DashboardPage() {
             <FrontPageLayout>
                 <FrontPageBox>
                     <FrontPageBoxHeader>
-                        <h3>{`${
-                            roles.find((r) => r.name === authorizedUser.role)
-                                ?.pretty
-                        } ${authorizedUser.username}`}</h3>
+                        <h3>{`${roles[authorizedUser.role]} ${
+                            authorizedUser.username
+                        }`}</h3>
 
                         <div className="text-xs text-purple-400">
                             {!editingPassword && !editingUsers && (
@@ -113,7 +112,7 @@ export default function DashboardPage() {
                     <p>Tervetuloa Laudan hallintapaneeliin.</p>
                 </FrontPageBox>
 
-                {authorizedUser.role === "SOPSY" && users && (
+                {authorizedUser.role === UserRole.ADMIN && users && (
                     <FrontPageBox>
                         <FrontPageBoxHeader>
                             <h3>Käyttäjät</h3>
@@ -184,15 +183,11 @@ export default function DashboardPage() {
                                 {users?.map((u) => (
                                     <tr key={u.id}>
                                         <td>{u.username}</td>
-                                        <td>
-                                            {roles.find(
-                                                (r) => r.name === u.role
-                                            )?.pretty ?? "Tuntematon"}
-                                        </td>
+                                        <td>{roles[u.role] ?? "Tuntematon"}</td>
                                         {editingUsers &&
                                             !editingUser &&
                                             !creatingUser &&
-                                            u.role !== "SOPSY" && (
+                                            u.role !== UserRole.ADMIN && (
                                                 <td className="text-xs text-gray-400">
                                                     {" ["}
                                                     <button
