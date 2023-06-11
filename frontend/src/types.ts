@@ -42,6 +42,10 @@ export interface Thread {
     posts: Post[];
 }
 
+export interface PostPreview extends Post {
+    thread: Omit<Thread, "posts">;
+}
+
 export interface User {
     id: string;
     username: string;

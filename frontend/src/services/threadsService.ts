@@ -1,5 +1,12 @@
 import axios from "axios";
-import { Board, Post, PostForm, Thread, ThreadForm } from "../types";
+import {
+    Board,
+    Post,
+    PostForm,
+    PostPreview,
+    Thread,
+    ThreadForm,
+} from "../types";
 
 const boardsBaseUrl = (board: Board) => `/api/boards/${board.id}/threads`;
 
@@ -61,6 +68,13 @@ const deletePost = async (jwtToken: string, post: Post): Promise<void> => {
     });
 };
 
+const getPostByNumber = async (postNumber: number) => {
+    const response = await axios.get<PostPreview>(
+        `/api/posts/number/${postNumber}`
+    );
+    return response.data;
+};
+
 const deletePostFile = async (jwtToken: string, post: Post): Promise<void> => {
     await axios.delete(`/api/posts/${post.id}/file`, {
         headers: {
@@ -75,6 +89,7 @@ const threadsService = {
     getThreadByNumber,
     reply,
     deletePost,
+    getPostByNumber,
     deletePostFile,
 };
 

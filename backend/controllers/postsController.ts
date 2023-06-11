@@ -16,12 +16,9 @@ router.get("/number/:number", async (req, res) => {
     }).populate("thread", "-posts");
     if (!post) throw new NotFoundError("Post not found");
 
-    console.log(post);
-    console.log("Post thread:", post.thread?.toJSON());
-
     res.json({
         ...post.toJSON(),
-        thread: post.thread,
+        thread: post.thread?.toJSON(),
     });
 });
 

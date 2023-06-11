@@ -1,4 +1,4 @@
-import mongoose, { PopulatedDoc, Types } from "mongoose";
+import mongoose, { PopulatedDoc } from "mongoose";
 import { Post } from "./Post";
 import { Board } from "./Board";
 
@@ -12,7 +12,7 @@ export type Thread = {
     replyCount: number;
     fileReplyCount: number;
     // Post ids are either populated or ObjectId
-    posts: Types.Array<PopulatedDoc<Post, mongoose.Types.ObjectId>>;
+    posts: Array<PopulatedDoc<Post, mongoose.Types.ObjectId>>;
 };
 
 const threadSchema = new mongoose.Schema({
