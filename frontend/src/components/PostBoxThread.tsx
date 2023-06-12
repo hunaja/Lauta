@@ -103,9 +103,7 @@ export default function PostBoxThread({
 
     const isOp = thread?.number === post.number;
 
-    const imageUrl = imageOpened
-        ? `/api/posts/${post.id}/file`
-        : `/files/lauta-${isOp ? "opthumbnails" : "thumbnails"}/${post.id}.png`;
+    const fullUrl = `/api/posts/${post.id}/file`;
 
     return (
         <>
@@ -118,7 +116,11 @@ export default function PostBoxThread({
                         onClick={() => toggleImageOpened()}
                     >
                         <img
-                            src={imageUrl}
+                            src={
+                                imageOpened
+                                    ? fullUrl
+                                    : `/files/lauta-opthumbnails/${post.id}.png`
+                            }
                             alt=""
                             loading="lazy"
                             onLoad={() => imageOpened && setImageLoaded(true)}
@@ -201,24 +203,36 @@ export default function PostBoxThread({
                     </div>
                 )}
 
-                {!isOp && post.file && (
-                    <>
-                        <br />
-                        <span className="text-gray-400 text-xs ml-1">{`Tiedosto: ${post.file.name}, ${post.file.size} KB`}</span>
-                    </>
-                )}
+                {post.file &&
+                    (isOp ? (
+                        <>
+                            <br />
+                            <span className="text-gray-400 text-xs block sm:hidden">{`Tiedosto: ${post.file.name}, ${post.file.size} KB`}</span>
+                        </>
+                    ) : (
+                        <>
+                            <br />
+                            <span className="text-gray-400 text-xs">{`Tiedosto: ${post.file.name}, ${post.file.size} KB`}</span>
+                        </>
+                    ))}
             </div>
 
-            {!isOp && post.file && (
+            {post.file && (
                 <>
                     {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,
                          jsx-a11y/click-events-have-key-events */}
                     <aside
-                        className="float-left block mr-1 cursor-pointer"
+                        className={`float-left block mr-1 cursor-pointer ${
+                            isOp ? "block sm:hidden " : ""
+                        }`}
                         onClick={() => toggleImageOpened()}
                     >
                         <img
-                            src={imageUrl}
+                            src={
+                                imageOpened
+                                    ? fullUrl
+                                    : `/files/lauta-thumbnails/${post.id}.png`
+                            }
                             alt=""
                             loading="lazy"
                             onLoad={() => imageOpened && setImageLoaded(true)}

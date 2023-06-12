@@ -98,10 +98,10 @@ export default function ThreadPage() {
                     {opPost && (
                         <>
                             {opPost.file && (
-                                <span className="text-gray-400 text-xs ml-1">{`Tiedosto: ${opPost.file.name}, ${opPost.file.size} KB`}</span>
+                                <span className="text-gray-400 text-xs hidden sm:block">{`Tiedosto: ${opPost.file.name}, ${opPost.file.size} KB`}</span>
                             )}
                             <div
-                                className="mb-1 p-1 sm:p-0 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent"
+                                className="mb-1 sm:mb-0 p-1 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent"
                                 ref={
                                     opPost.number === highlightedMessage
                                         ? highlightedRef
@@ -126,7 +126,7 @@ export default function ThreadPage() {
                     {replies.map((reply) => (
                         <React.Fragment key={reply.id}>
                             <div
-                                className={`overflow-hidden border-2 ${
+                                className={`mb-1 sm:mb-0 overflow-hidden border-2 ${
                                     reply.number === highlightedMessage
                                         ? "border-purple-500"
                                         : "border-purple-200"
@@ -151,7 +151,7 @@ export default function ThreadPage() {
                                     }
                                 />
                             </div>
-                            <br />
+                            <br className="hidden sm:block" />
                         </React.Fragment>
                     ))}
 

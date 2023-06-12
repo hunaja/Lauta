@@ -78,15 +78,25 @@ router.delete(
 
 // Getting threads of a board
 router.get("/:id/threads", async (req, res) => {
+    const pageSize = 10;
+    const postsPerThread = 1;
+
     // TODO: Implement different thread list modes here
-    const perDocumentLimit = 1;
+    const page = Number(req.query.page) || 2;
+    if (page < 1)
+        throw new InvalidRequestError(
+            "page",
+            "Sivunumero ei voi olla pienempi kuin 1."
+        );
 
     const threads = await Thread.find({
         board: new mongoose.Types.ObjectId(req.params.id),
     })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
         .populate({
             path: "posts",
-            perDocumentLimit,
+            perDocumentLimit: postsPerThread,
         })
         .sort({
             bumpedAt: -1,

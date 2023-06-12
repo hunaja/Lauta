@@ -4,10 +4,10 @@ import useSWR from "swr";
 import { Board, ThreadForm } from "../types";
 import threadsService from "../services/threadsService";
 
-export default function useCatalog(board?: Board) {
+export default function useCatalog(board?: Board, page = 1) {
     const { data, mutate, error, isValidating } = useSWR(
-        board ? `/api/boards/${board.id}/threads` : null,
-        board ? async () => threadsService.getPreviews(board) : null,
+        board ? `/api/boards/${board.id}/threads?page=${page}` : null,
+        board ? async () => threadsService.getPreviews(board, page) : null,
         {
             revalidateIfStale: false,
             revalidateOnFocus: false,

@@ -7,7 +7,7 @@ import {
     RefreshIcon,
     ReplyIcon,
 } from "@heroicons/react/solid";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import useBoard from "../hooks/useBoard";
 import BoardHeader from "./BoardHeader";
@@ -21,6 +21,9 @@ import LoadingSpinner from "./LoadingSpinner";
 export default function BoardIndex() {
     const threadFormRef = useRef<ThreadFormRef>(null);
     const [formHidden, setFormHidden] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = Number(searchParams.get("page")) || 1;
+
     const board = useBoard();
     const {
         threads,
@@ -28,7 +31,7 @@ export default function BoardIndex() {
         error,
         update,
         validating,
-    } = useCatalog(board);
+    } = useCatalog(board, page);
 
     if (!board) return null;
 
@@ -54,6 +57,13 @@ export default function BoardIndex() {
         update();
     };
 
+    const handlePageChange = (pageId: number) => {
+        const params = new URLSearchParams();
+        if (pageId > 1) params.set("page", pageId.toString());
+
+        setSearchParams(params);
+    };
+
     return (
         <div className="flex flex-col h-screen w-screen">
             <Helmet>
@@ -62,28 +72,48 @@ export default function BoardIndex() {
 
             <BoardHeader />
 
-            <div className="text-right text-gray-400 p-1">
-                {" [ "}
-                <button
-                    className="text-indigo-500 hover:text-indigo-700 hover:underline"
-                    type="button"
-                    onClick={() => handleRefresh()}
-                >
-                    <RefreshIcon className="inline-block h-3 w-3 mr-1" />
-                    Päivitä
-                </button>
-                {" ] "}
+            <div className="flex justify-between text-gray-400 p-1">
+                <div>
+                    Sivu:
+                    {Array.from({ length: page + 2 }, (_, i) => i + 1).map(
+                        (i) => (
+                            <>
+                                {" [ "}
+                                <button
+                                    className="text-indigo-500 hover:text-indigo-700 hover:underline"
+                                    type="button"
+                                    onClick={() => handlePageChange(i)}
+                                >
+                                    {i}
+                                </button>
+                                {" ]"}
+                            </>
+                        )
+                    )}
+                </div>
+                <div>
+                    {" [ "}
+                    <button
+                        className="text-indigo-500 hover:text-indigo-700 hover:underline"
+                        type="button"
+                        onClick={() => handleRefresh()}
+                    >
+                        <RefreshIcon className="inline-block h-3 w-3 mr-1" />
+                        Päivitä
+                    </button>
+                    {" ] "}
 
-                {" [ "}
-                <button
-                    className="text-indigo-500 hover:text-indigo-700 hover:underline"
-                    type="button"
-                    onClick={() => openForm()}
-                >
-                    <PlusIcon className="inline-block h-3 w-3 mr-1" />
-                    Uusi
-                </button>
-                {" ] "}
+                    {" [ "}
+                    <button
+                        className="text-indigo-500 hover:text-indigo-700 hover:underline"
+                        type="button"
+                        onClick={() => openForm()}
+                    >
+                        <PlusIcon className="inline-block h-3 w-3 mr-1" />
+                        Uusi
+                    </button>
+                    {" ] "}
+                </div>
             </div>
 
             {!formHidden && (
