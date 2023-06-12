@@ -99,7 +99,7 @@ export default function BoardIndex() {
             ) : (
                 <main>
                     {!threads?.length && <p>Täällä on tyhjää.</p>}
-                    <div className="text-clip break-words overflow-clip shadowed grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 auto-rows-[275px] m-2">
+                    <div className="text-clip break-words overflow-clip m-2 grid grid-cols-auto-fit gap-2 w-100 overflow-hidden">
                         {threads?.map(
                             ({ posts: [opPost], ...thread }) =>
                                 opPost && (

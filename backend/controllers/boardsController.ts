@@ -154,7 +154,8 @@ router.post(
 
             const postFile: PostFile = {
                 size: Math.floor(file.size / 1000),
-                name: file.originalname,
+                // Name should be truncated to 50 characters
+                name: file.originalname.substring(0, 50),
                 mimeType: file.actualMimetype,
                 location: `${post._id}.${file.actualExt || "unknown"}`,
                 // TODO: Support spoilers
