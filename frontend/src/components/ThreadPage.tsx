@@ -13,6 +13,8 @@ import NotFoundPage from "./NotFoundPage";
 
 export default function ThreadPage() {
     const replyFormRef = useRef<ReplyFormRef>(null);
+    const highlightedRef = useRef<HTMLDivElement>(null);
+    const [highlightedRefReady, setHighlightedRefReady] = useState(false);
 
     const { hash } = useLocation();
     const { threadNumber: threadNumberStr } = useParams();
@@ -33,15 +35,20 @@ export default function ThreadPage() {
     } = useThread(board, threadNumber);
 
     useEffect(() => {
-        if (highlightedMessage === null) return;
+        if (highlightedMessage === null || !highlightedRefReady) return;
+
+        highlightedRef?.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+        });
 
         const clearHighlightedMessage = setTimeout(() => {
             setHighlightedMessage(null);
-        }, 10000);
+        }, 3000);
 
         // eslint-disable-next-line consistent-return
         return () => clearTimeout(clearHighlightedMessage);
-    }, [highlightedMessage]);
+    }, [highlightedMessage, highlightedRefReady]);
 
     if (!board || !threadNumber) return null;
 
@@ -93,13 +100,23 @@ export default function ThreadPage() {
                             {opPost.file && (
                                 <span className="text-gray-400 text-xs ml-1">{`Tiedosto: ${opPost.file.name}, ${opPost.file.size} KB`}</span>
                             )}
-                            <div className="mb-1 p-1 sm:p-0 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent">
+                            <div
+                                className="mb-1 p-1 sm:p-0 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent"
+                                ref={
+                                    opPost.number === highlightedMessage
+                                        ? highlightedRef
+                                        : undefined
+                                }
+                            >
                                 <PostBoxBody
                                     thread={thread}
                                     post={opPost}
                                     quotePost={quotePost}
                                     deletePost={deletePost}
                                     deletePostFile={deletePostFile}
+                                    setHighlightedMessage={
+                                        setHighlightedMessage
+                                    }
                                 />
                                 <div className="clear-both sm:clear-none" />
                             </div>
@@ -116,6 +133,12 @@ export default function ThreadPage() {
                                 } bg-white p-1 block sm:inline-block w-full sm:w-auto sm:max-w-[96%] break-words`}
                                 key={reply.id}
                                 id={`${reply.id}`}
+                                ref={(ref) => {
+                                    if (reply.number === highlightedMessage) {
+                                        highlightedRef.current = ref;
+                                        setHighlightedRefReady(true);
+                                    }
+                                }}
                             >
                                 <PostBoxBody
                                     thread={thread}
@@ -123,6 +146,9 @@ export default function ThreadPage() {
                                     quotePost={quotePost}
                                     deletePost={deletePost}
                                     deletePostFile={deletePostFile}
+                                    setHighlightedMessage={
+                                        setHighlightedMessage
+                                    }
                                 />
                             </div>
                             <br />

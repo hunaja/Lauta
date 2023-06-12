@@ -7,10 +7,14 @@ import useAuthStore from "../hooks/useAuthStore";
 import useBoards from "../hooks/useBoards";
 
 interface BoardHeaderProps {
+    children?: any;
     showBoardHeader?: boolean;
 }
 
-export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
+export default function BoardHeader({
+    children,
+    showBoardHeader,
+}: BoardHeaderProps) {
     const currentBoard = useBoard();
     const { boards } = useBoards();
     const authorizedUser = useAuthStore((state) => state.authorizedUser);
@@ -55,6 +59,8 @@ export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
                 {" ] "}
             </div>
 
+            {children}
+
             {currentBoard && showBoardHeader && (
                 <div className="text-center py-5">
                     <h1 className="text-xl">{currentBoard.name}</h1>
@@ -67,4 +73,5 @@ export default function BoardHeader({ showBoardHeader }: BoardHeaderProps) {
 
 BoardHeader.defaultProps = {
     showBoardHeader: true,
+    children: null,
 };

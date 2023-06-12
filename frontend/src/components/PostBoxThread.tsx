@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import useBoard from "../hooks/useBoard";
 import useAuthStore from "../hooks/useAuthStore";
 import { Post, Thread, UserRole } from "../types";
@@ -12,9 +13,10 @@ import PostBoxFloatingFromId from "./PostBoxFloatingFromId";
 interface Props {
     thread: Thread;
     post: Post;
-    quotePost?: (postNumber: number) => void;
-    deletePost?: (post: Post) => Promise<void>;
-    deletePostFile?: (post: Post) => Promise<void>;
+    quotePost: (postNumber: number) => void;
+    deletePost: (post: Post) => Promise<void>;
+    deletePostFile: (post: Post) => Promise<void>;
+    setHighlightedMessage: (postNumber: number) => void;
 }
 
 export default function PostBoxThread({
@@ -23,7 +25,10 @@ export default function PostBoxThread({
     quotePost,
     deletePost,
     deletePostFile,
+    setHighlightedMessage,
 }: Props) {
+    const navigate = useNavigate();
+
     const board = useBoard();
     const popupRef = useRef<HTMLDivElement>(null);
     const [popupOpen, setPopupOpen] = useState(false);
@@ -55,7 +60,7 @@ export default function PostBoxThread({
         number: number
     ) => {
         event.preventDefault();
-        if (quotePost) quotePost(number);
+        quotePost(number);
     };
 
     const authorColor = () => {
@@ -65,11 +70,11 @@ export default function PostBoxThread({
     };
 
     const onDeletePostClick = () => {
-        deletePost?.(post);
+        deletePost(post);
     };
 
     const onDeleteFileClick = () => {
-        deletePostFile?.(post);
+        deletePostFile(post);
         setPopupOpen(false);
     };
 
@@ -83,6 +88,17 @@ export default function PostBoxThread({
         if (!boxPost) return <PostBoxFloatingFromId postNumber={postNumber} />;
 
         return <PostBoxFloating thread={thread} post={boxPost} />;
+    };
+
+    const onQuoteClick = (
+        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+        number: number
+    ) => {
+        if (thread.posts.some((p) => p.number === number)) {
+            event.preventDefault();
+            navigate(`#${number}`);
+            setHighlightedMessage(number);
+        }
     };
 
     const isOp = thread?.number === post.number;
@@ -216,15 +232,13 @@ export default function PostBoxThread({
             <div className="block overflow-hidden">
                 <h2 className="text-xl">{isOp && thread.title}</h2>
                 <blockquote>
-                    {formatPost(post.text, (id) => renderPostBox(id))}
+                    {formatPost(
+                        post.text,
+                        (id) => renderPostBox(id),
+                        (event, id) => onQuoteClick(event, id)
+                    )}
                 </blockquote>
             </div>
         </>
     );
 }
-
-PostBoxThread.defaultProps = {
-    quotePost: undefined,
-    deletePost: undefined,
-    deletePostFile: undefined,
-};

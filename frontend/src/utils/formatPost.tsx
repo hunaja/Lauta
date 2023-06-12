@@ -4,7 +4,11 @@ import PostLink from "../components/PostLink";
 
 export const renderPostLinks = (
     text: string,
-    postBox?: (postNumber: number) => JSX.Element
+    postBox?: (postNumber: number) => JSX.Element,
+    onClick?: (
+        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+        postNumber: number
+    ) => void
 ) => {
     text = text.replaceAll("\r\n", "\n");
     const newText = text.slice(-1) === "\n" ? text : `${text}\n`;
@@ -17,7 +21,13 @@ export const renderPostLinks = (
         const postNumber = Number(postNumberStr);
 
         if (postNumber) {
-            return <PostLink postBox={postBox} postNumber={postNumber} />;
+            return (
+                <PostLink
+                    postBox={postBox}
+                    onClick={onClick}
+                    postNumber={postNumber}
+                />
+            );
         }
 
         if (match === "\n") {
@@ -52,16 +62,18 @@ export const renderQuotes = (elements: (string | JSX.Element)[]) =>
             [[]]
         )
         .map((line) => {
+            const [firstBlock] = line;
+
             // If the line starts with text, it can be decorated
-            if (typeof line[0] === "string") {
+            if (typeof firstBlock === "string") {
                 // Greentexting
-                if (line[0].startsWith(">")) {
+                if (firstBlock.startsWith(">")) {
                     // eslint-disable-next-line react/no-array-index-key
                     return <span className="text-green-600">{line}</span>;
                 }
 
                 // "Bluetexting"
-                if (line[0].startsWith("<")) {
+                if (firstBlock.startsWith("<")) {
                     // eslint-disable-next-line react/no-array-index-key
                     return <span className="text-sky-700">{line}</span>;
                 }
@@ -71,5 +83,11 @@ export const renderQuotes = (elements: (string | JSX.Element)[]) =>
             return line;
         });
 
-export default (text: string, postBox?: (postNumber: number) => JSX.Element) =>
-    renderQuotes(renderPostLinks(text, postBox));
+export default (
+    text: string,
+    postBox?: (postNumber: number) => JSX.Element,
+    onClick?: (
+        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+        postNumber: number
+    ) => void
+) => renderQuotes(renderPostLinks(text, postBox, onClick));

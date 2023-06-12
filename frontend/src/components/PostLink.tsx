@@ -4,9 +4,13 @@ import { Link } from "react-router-dom";
 type Props = {
     postNumber: number;
     postBox?: (postNumber: number) => JSX.Element;
+    onClick?: (
+        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+        postNumber: number
+    ) => void;
 };
 
-export default function PostLink({ postNumber, postBox }: Props) {
+export default function PostLink({ postNumber, postBox, onClick }: Props) {
     const [previewOpen, setPreviewOpen] = useState(false);
 
     return (
@@ -16,6 +20,7 @@ export default function PostLink({ postNumber, postBox }: Props) {
                     to={`/post/${postNumber}`}
                     onMouseOver={() => setPreviewOpen(true)}
                     onMouseLeave={() => setPreviewOpen(false)}
+                    onClick={(event) => onClick?.(event, postNumber)}
                 >
                     {`>>${postNumber}`}
                 </Link>
@@ -33,4 +38,5 @@ export default function PostLink({ postNumber, postBox }: Props) {
 
 PostLink.defaultProps = {
     postBox: undefined,
+    onClick: undefined,
 };
