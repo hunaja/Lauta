@@ -5,10 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import useBoard from "../hooks/useBoard";
 import useAuthStore from "../hooks/useAuthStore";
 import { Post, Thread, UserRole } from "../types";
-import formatTimeAgo from "../utils/formatTimeAgo";
 import formatPost from "../utils/formatPost";
 import PostBoxFloating from "./PostBoxFloating";
 import PostBoxFloatingFromId from "./PostBoxFloatingFromId";
+import useTimeAgo from "../hooks/useTimeAgo";
 
 interface Props {
     thread: Thread;
@@ -37,6 +37,7 @@ export default function PostBoxThread({
     const isAdmin = useAuthStore(
         (state) => state.authorizedUser?.role === UserRole.ADMIN
     );
+    const timeAgo = useTimeAgo(post.createdAt);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -144,7 +145,7 @@ export default function PostBoxThread({
                     {`No. ${post.number}`}
                 </Link>
                 {" • "}
-                <time>{formatTimeAgo(post.createdAt)}</time>
+                <time>{timeAgo}</time>
                 <button
                     type="button"
                     className="text-indigo-500 hover:text-indigo-700 hover:underline"

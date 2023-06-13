@@ -78,7 +78,7 @@ router.delete(
 
 // Getting threads of a board
 router.get("/:id/threads", async (req, res) => {
-    const pageSize = 10;
+    const pageSize = 16;
     const postsPerThread = 1;
 
     // TODO: Implement different thread list modes here

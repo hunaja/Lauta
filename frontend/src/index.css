@@ -3,8 +3,9 @@
 @import "tailwindcss/utilities";
 
 html,
-body {
-    @apply bg-rose-50 h-screen;
+body,
+#root {
+    @apply bg-rose-50 h-screen flex flex-col;
 }
 
 a {
@@ -14,8 +15,4 @@ a {
 a:hover,
 a:focus {
     @apply text-indigo-700 underline;
-}
-
-#root {
-    @apply min-h-screen;
 }

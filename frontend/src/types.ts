@@ -97,3 +97,8 @@ export interface AuthStore {
     logout: () => void;
     changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
 }
+
+export interface TimeStore {
+    time: Date;
+    setTime: (time: Date) => void;
+}

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import useStore from "./hooks/useAuthStore";
-import RedirectToPost from "./components/RedirectToPost";
+import useAuthStore from "./hooks/useAuthStore";
 import useBoards from "./hooks/useBoards";
+import useTimeStore from "./hooks/useTimeStore";
 
 import HandleBoard from "./components/HandleBoard";
 import BoardIndex from "./components/BoardIndex";
@@ -15,15 +15,27 @@ import LoginPage from "./components/LoginPage";
 import DashboardPage from "./components/DashboardPage";
 import RequireAuth from "./components/RequireAuth";
 import LoadingSpinner from "./components/LoadingSpinner";
+import RedirectToPost from "./components/RedirectToPost";
 
 function App() {
-    const initializeAuth = useStore((state) => state.initializeAuth);
+    const initializeAuth = useAuthStore((state) => state.initializeAuth);
+    const setTime = useTimeStore((state) => state.setTime);
 
     const { boards } = useBoards();
 
     useEffect(() => {
         initializeAuth();
     }, [initializeAuth]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [setTime]);
 
     if (!boards) {
         return (

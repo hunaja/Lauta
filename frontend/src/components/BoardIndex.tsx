@@ -1,22 +1,16 @@
 import React, { useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-// TODO: NÄä fiksummin
-import {
-    PhotographIcon,
-    PlusIcon,
-    RefreshIcon,
-    ReplyIcon,
-} from "@heroicons/react/solid";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import RefreshIcon from "@heroicons/react/solid/RefreshIcon";
+import PlusIcon from "@heroicons/react/solid/PlusIcon";
 
 import useBoard from "../hooks/useBoard";
 import BoardHeader from "./BoardHeader";
 import ThreadForm, { Ref as ThreadFormRef } from "./forms/ThreadForm";
 import useCatalog from "../hooks/useCatalog";
-import formatTimeAgo from "../utils/formatTimeAgo";
-import formatPost from "../utils/formatPost";
 import NotFoundPage from "./NotFoundPage";
 import LoadingSpinner from "./LoadingSpinner";
+import BoardIndexBox from "./BoardIndexBox";
 
 export default function BoardIndex() {
     const threadFormRef = useRef<ThreadFormRef>(null);
@@ -65,7 +59,7 @@ export default function BoardIndex() {
     };
 
     return (
-        <div className="flex flex-col h-screen w-screen">
+        <>
             <Helmet>
                 <title>{`/${board.path}/ - ${board.name} - Lauta`}</title>
             </Helmet>
@@ -124,72 +118,25 @@ export default function BoardIndex() {
                 />
             )}
 
-            {validating ? (
-                <LoadingSpinner />
-            ) : (
-                <main>
-                    {!threads?.length && <p>Täällä on tyhjää.</p>}
-                    <div className="text-clip break-words overflow-clip m-2 grid grid-cols-auto-fit gap-2 w-100 overflow-hidden">
-                        {threads?.map(
-                            ({ posts: [opPost], ...thread }) =>
-                                opPost && (
-                                    <div
-                                        className="bg-white border-2 border-purple-200 flex flex-col justify-between h-100 overflow-hidden"
-                                        key={thread.id}
-                                        tabIndex={thread.bumpedAt}
-                                    >
-                                        <Link
-                                            className="text-black shrink overflow-hidden grow"
-                                            to={`/${board.path}/${thread.number}`}
-                                        >
-                                            {opPost.file && (
-                                                <img
-                                                    src={`/files/lauta-thumbnails/${opPost.id}.png`}
-                                                    alt=""
-                                                    className="mx-auto"
-                                                />
-                                            )}
-                                            <div className="p-1 h-full">
-                                                <h4 className="text-xl">
-                                                    {thread.title}
-                                                </h4>
-                                                {opPost.number ===
-                                                thread.number ? (
-                                                    opPost.text &&
-                                                    formatPost(
-                                                        opPost.text.slice(
-                                                            0,
-                                                            100
-                                                        )
-                                                    )
-                                                ) : (
-                                                    <span className="text-gray-500 bold">
-                                                        Langan aloitusviesti on
-                                                        poistettu.
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </Link>
+            {validating && <LoadingSpinner />}
 
-                                        <div className="flex p-1 justify-between text-gray-400 text-sm bg-white w-full shrink-0 grow-0">
-                                            <span>
-                                                {formatTimeAgo(
-                                                    opPost.createdAt
-                                                )}
-                                            </span>
-                                            <span>
-                                                <ReplyIcon className="inline-block h-3 w-3 mr-1" />
-                                                {thread.replyCount}
-                                                <PhotographIcon className="inline-block h-3 w-3 ml-1 mr-1" />
-                                                {thread.fileReplyCount}
-                                            </span>
-                                        </div>
-                                    </div>
-                                )
-                        )}
-                    </div>
-                </main>
+            {!validating && (
+                <>
+                    {!threads?.length && (
+                        <div className="flex grow align-center place-center items-center justify-center">
+                            <i>Ei lankoja.</i>
+                        </div>
+                    )}
+
+                    {threads.length > 0 && (
+                        <main className="m-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
+                            {threads?.map((t) => (
+                                <BoardIndexBox key={t.id} thread={t} />
+                            ))}
+                        </main>
+                    )}
+                </>
             )}
-        </div>
+        </>
     );
 }

@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 import useBoard from "../hooks/useBoard";
 import { Post, Thread } from "../types";
-import formatTimeAgo from "../utils/formatTimeAgo";
 import formatPost from "../utils/formatPost";
+import useTimeAgo from "../hooks/useTimeAgo";
 
 interface Props {
     thread: Pick<Thread, "number" | "title">;
@@ -12,6 +13,7 @@ interface Props {
 
 export default function PostBoxFloating({ thread, post }: Props) {
     const board = useBoard();
+    const timeAgo = useTimeAgo(post.createdAt);
 
     if (!board || !thread) return null;
 
@@ -34,7 +36,7 @@ export default function PostBoxFloating({ thread, post }: Props) {
                 {" • "}
                 <Link to={`#${post.number}`}>{`No. ${post.number}`}</Link>
                 {" • "}
-                <time>{formatTimeAgo(post.createdAt)}</time>
+                <time>{timeAgo}</time>
 
                 {post.file && (
                     <>
