@@ -60,6 +60,14 @@ const reply = async (thread: Thread, postForm: PostForm): Promise<Post> => {
     return response.data;
 };
 
+const remove = async (jwtToken: string, thread: Thread): Promise<void> => {
+    await axios.delete(`/api/threads/${thread.id}`, {
+        headers: {
+            Authorization: `Bearer ${jwtToken}`,
+        },
+    });
+};
+
 const deletePost = async (jwtToken: string, post: Post): Promise<void> => {
     await axios.delete(`/api/posts/${post.id}`, {
         headers: {
@@ -87,6 +95,7 @@ const threadsService = {
     getPreviews,
     create,
     getThreadByNumber,
+    remove,
     reply,
     deletePost,
     getPostByNumber,

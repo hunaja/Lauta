@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
 
@@ -20,7 +20,7 @@ export default function EditUserForm({
     editUser,
     callback,
 }: Props) {
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit, setFocus } = useForm({
         defaultValues: {
             username: defaultUsername,
             role: defaultRole,
@@ -32,6 +32,10 @@ export default function EditUserForm({
             callback();
         });
     };
+
+    useEffect(() => {
+        setFocus("username");
+    }, [setFocus]);
 
     return (
         <div className="p-1">

@@ -68,17 +68,6 @@ export default function DashboardPage() {
                         }`}</h3>
 
                         <div className="text-xs text-purple-400">
-                            {!editingPassword && !editingUsers && (
-                                <button
-                                    className="underline mr-2 hover:text-purple-500"
-                                    type="button"
-                                    onClick={() => logout()}
-                                >
-                                    <LogoutIcon className="inline-block h-3 w-3" />
-                                    Kirjaudu ulos
-                                </button>
-                            )}
-
                             <button
                                 className="underline mr-2 hover:text-purple-500"
                                 type="button"
@@ -97,6 +86,17 @@ export default function DashboardPage() {
                                         </>
                                     ))}
                             </button>
+
+                            {!editingPassword && !editingUsers && (
+                                <button
+                                    className="underline mr-2 hover:text-purple-500"
+                                    type="button"
+                                    onClick={() => logout()}
+                                >
+                                    <LogoutIcon className="inline-block h-3 w-3" />
+                                    Kirjaudu ulos
+                                </button>
+                            )}
                         </div>
                     </FrontPageBoxHeader>
 

@@ -32,6 +32,7 @@ export default function ThreadPage() {
         deletePost,
         deletePostFile,
         error,
+        remove,
     } = useThread(board, threadNumber);
 
     useEffect(() => {
@@ -96,31 +97,25 @@ export default function ThreadPage() {
                     )}
 
                     {opPost && (
-                        <>
-                            {opPost.file && (
-                                <span className="text-gray-400 text-xs hidden sm:block">{`Tiedosto: ${opPost.file.name}, ${opPost.file.size} KB`}</span>
-                            )}
-                            <div
-                                className="mb-1 sm:mb-0 p-1 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent"
-                                ref={
-                                    opPost.number === highlightedMessage
-                                        ? highlightedRef
-                                        : undefined
-                                }
-                            >
-                                <PostBoxBody
-                                    thread={thread}
-                                    post={opPost}
-                                    quotePost={quotePost}
-                                    deletePost={deletePost}
-                                    deletePostFile={deletePostFile}
-                                    setHighlightedMessage={
-                                        setHighlightedMessage
-                                    }
-                                />
-                                <div className="clear-both sm:clear-none" />
-                            </div>
-                        </>
+                        <div
+                            className="mb-1 sm:mb-0 p-1 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent"
+                            ref={
+                                opPost.number === highlightedMessage
+                                    ? highlightedRef
+                                    : undefined
+                            }
+                        >
+                            <PostBoxBody
+                                thread={thread}
+                                post={opPost}
+                                quotePost={quotePost}
+                                deletePost={deletePost}
+                                deletePostFile={deletePostFile}
+                                setHighlightedMessage={setHighlightedMessage}
+                                deleteThread={remove}
+                            />
+                            <div className="clear-both sm:clear-none" />
+                        </div>
                     )}
 
                     {replies.map((reply) => (

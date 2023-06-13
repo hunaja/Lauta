@@ -171,10 +171,10 @@ export default function FrontPage() {
                         <i>Yhtään alalautaa ei ole vielä luotu.</i>
                     )}
 
-                    <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+                    <ul className="grid place-items-center text-center grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                         {boards?.map((board) => (
                             <li key={board.id} className="break-words">
-                                <Link to={`/${board.path}`}>
+                                <Link to={`/${board.path}`} className="text-sm">
                                     {`${board.name} - /${board.path}/`}
                                 </Link>
 
@@ -195,9 +195,8 @@ export default function FrontPage() {
                                         {" ]"}
                                     </span>
                                 )}
-
                                 <br />
-                                {board.title}
+                                <span className="mt-2">{board.title}</span>
                             </li>
                         ))}
                     </ul>
@@ -209,7 +208,7 @@ export default function FrontPage() {
                             <h3>Uusimmat kuvat</h3>
                         </FrontPageBoxHeader>
 
-                        <ul className="grid grid-cols-5 gap-4">
+                        <ul className="grid place-items-center grid-cols-5 gap-4">
                             {latestImages.map((image) => (
                                 <li key={image.id}>
                                     <Link to={`/post/${image.postNumber}`}>

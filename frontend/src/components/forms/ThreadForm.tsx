@@ -68,7 +68,7 @@ const ThreadForm = forwardRef<Ref, Props>(({ board, trigger }, ref) => {
     };
 
     return (
-        <div className="p-2 border-2 border-purple-200 bg-white w-full lg:w-[50%] mx-auto">
+        <div className="p-2 border-2 border-purple-200 bg-white w-full lg:w-[40em] my-2 lg:mx-auto">
             <h2 className="text-xl">Luo lanka</h2>
             <form className="p-1" onSubmit={handleSubmit(onSubmit)}>
                 <fieldset>

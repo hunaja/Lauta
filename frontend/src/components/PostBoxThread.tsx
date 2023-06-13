@@ -17,6 +17,7 @@ interface Props {
     deletePost: (post: Post) => Promise<void>;
     deletePostFile: (post: Post) => Promise<void>;
     setHighlightedMessage: (postNumber: number) => void;
+    deleteThread?: (thread: Thread) => Promise<void>;
 }
 
 export default function PostBoxThread({
@@ -26,6 +27,7 @@ export default function PostBoxThread({
     deletePost,
     deletePostFile,
     setHighlightedMessage,
+    deleteThread,
 }: Props) {
     const navigate = useNavigate();
 
@@ -67,7 +69,7 @@ export default function PostBoxThread({
     const authorColor = () => {
         if (post.saging) return "text-purple-700";
         if (post.author && post.author !== "Anonyymi") return "text-purple-500";
-        return "text-purple-400";
+        return "text-purple-300";
     };
 
     const onDeletePostClick = () => {
@@ -102,6 +104,10 @@ export default function PostBoxThread({
         }
     };
 
+    const onDeleteThreadClick = () => {
+        deleteThread?.(thread);
+    };
+
     const isOp = thread?.number === post.number;
 
     const fullUrl = `/api/posts/${post.id}/file`;
@@ -128,7 +134,7 @@ export default function PostBoxThread({
                         />
                     </aside>
                     {imageOpened && imageLoaded && (
-                        <br className="clear-both" />
+                        <div className="clear-both" />
                     )}
                 </>
             )}
@@ -175,6 +181,20 @@ export default function PostBoxThread({
 
                             {isAdmin && (
                                 <>
+                                    {thread.number === post.number && (
+                                        <li>
+                                            <button
+                                                onClick={() =>
+                                                    onDeleteThreadClick()
+                                                }
+                                                type="button"
+                                                className="pl-1 pr-1 w-full hover:text-indigo-500 hover:bg-gray-200"
+                                            >
+                                                Poista lanka
+                                            </button>
+                                        </li>
+                                    )}
+
                                     <li>
                                         <button
                                             onClick={() => onDeletePostClick()}
@@ -208,7 +228,7 @@ export default function PostBoxThread({
                     (isOp ? (
                         <>
                             <br />
-                            <span className="text-gray-400 text-xs block sm:hidden">{`Tiedosto: ${post.file.name}, ${post.file.size} KB`}</span>
+                            <span className="text-gray-400 text-xs">{`Tiedosto: ${post.file.name}, ${post.file.size} KB`}</span>
                         </>
                     ) : (
                         <>
@@ -240,7 +260,7 @@ export default function PostBoxThread({
                         />
                     </aside>
                     {imageOpened && imageLoaded && (
-                        <br className="clear-both" />
+                        <div className="clear-both" />
                     )}
                 </>
             )}
@@ -257,3 +277,7 @@ export default function PostBoxThread({
         </>
     );
 }
+
+PostBoxThread.defaultProps = {
+    deleteThread: undefined,
+};

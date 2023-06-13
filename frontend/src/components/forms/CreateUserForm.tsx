@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { UserAddIcon } from "@heroicons/react/solid";
 
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function CreateUserForm({ createUser }: Props) {
-    const { register, watch, handleSubmit, reset } = useForm({
+    const { register, watch, handleSubmit, reset, setFocus } = useForm({
         defaultValues: {
             username: "",
             role: UserRole.TRAINEE,
@@ -22,6 +22,10 @@ export default function CreateUserForm({ createUser }: Props) {
     const handleFormSubmit: SubmitHandler<FieldValues> = (data) => {
         createUser(data as UserForm).then(() => reset());
     };
+
+    useEffect(() => {
+        setFocus("username");
+    }, [setFocus]);
 
     return (
         <div className="p-1">

@@ -53,13 +53,19 @@ export default function BoardIndexBox({
                     </div>
                 </Link>
 
-                <div className="flex p-1 justify-between text-gray-400 text-sm bg-white w-full shrink-0 grow-0">
-                    <span>{timeAgo}</span>
-                    <span>
-                        <ReplyIcon className="inline-block h-3 w-3 mr-1" />
-                        {thread.replyCount}
-                        <PhotographIcon className="inline-block h-3 w-3 ml-1 mr-1" />
-                        {thread.fileReplyCount}
+                <div className="flex p-1 justify-between text-gray-400 text-xs bg-white w-full shrink-0 grow-0">
+                    <span className="shrink">{timeAgo}</span>
+                    <span className="ml-2">
+                        <span>
+                            <ReplyIcon className="inline-block h-3 w-3 mr-1" />
+                            {thread.replyCount}
+                        </span>
+                        {thread.fileReplyCount && (
+                            <span>
+                                <PhotographIcon className="inline-block h-3 w-3 ml-1 mr-1" />
+                                {thread.fileReplyCount}
+                            </span>
+                        )}
                     </span>
                 </div>
             </div>

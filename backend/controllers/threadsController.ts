@@ -25,13 +25,35 @@ router.get("/number/:number", async (req, res) => {
 });
 
 // Delete a thread
-router.delete("/:id", requireMinRole(UserRole.MODERATOR), async (req, res) => {
-    const thread = await Thread.findByIdAndDelete(req.params.id);
-    if (!thread) throw new NotFoundError("Thread not found");
+router.delete(
+    "/:id",
+    requireMinRole(UserRole.MODERATOR),
+    async (req: Request, res: Response) => {
+        const thread = await Thread.findById(req.params.id);
+        if (!thread) throw new NotFoundError("Thread not found");
 
-    // TODO Remove the threads' posts from the database
-    // res.sendStatus(202);
-});
+        const posts = await Post.find({ thread: req.params.id }).populate(
+            "file"
+        );
+
+        const promises = [
+            ...posts
+                .filter((p) => p.file)
+                .map((post) =>
+                    filesService.deleteFile(
+                        { ...post.toJSON(), file: post.file },
+                        thread?.number === post.number
+                    )
+                ),
+            ...posts.map((post) => post.delete()),
+        ];
+        await Promise.all(promises);
+
+        await thread.delete();
+
+        res.sendStatus(202);
+    }
+);
 
 // Reply to a thread
 router.post(

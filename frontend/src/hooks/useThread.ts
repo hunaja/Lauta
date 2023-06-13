@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import useSWR from "swr";
 
-import { Board, Post, PostForm, ThreadForm } from "../types";
+import { Board, Post, PostForm, Thread, ThreadForm } from "../types";
 import threadsService from "../services/threadsService";
 import useAuthStore from "./useAuthStore";
 
@@ -36,6 +36,23 @@ export default function useThread(board?: Board, threadNumber?: number) {
             return createdThread;
         },
         [board, mutate]
+    );
+
+    const remove = useCallback(
+        async (thread1: Thread) => {
+            if (!board) {
+                throw new Error("Board is not defined");
+            }
+
+            if (!token) {
+                throw new Error("Unauthorized");
+            }
+
+            await threadsService.remove(token, thread1);
+
+            mutate(undefined, false);
+        },
+        [board, mutate, token]
     );
 
     const reply = useCallback(
@@ -122,5 +139,5 @@ export default function useThread(board?: Board, threadNumber?: number) {
         [board, mutate, thread, token]
     );
 
-    return { thread, create, reply, error, deletePost, deletePostFile };
+    return { thread, create, reply, error, remove, deletePost, deletePostFile };
 }

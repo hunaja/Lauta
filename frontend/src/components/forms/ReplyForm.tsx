@@ -1,5 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import PencilIcon from "@heroicons/react/solid/PencilIcon";
+
 import { Post, PostForm } from "../../types";
 
 interface Props {
@@ -132,9 +134,10 @@ const ReplyForm = forwardRef<Ref, Props>(({ replyThread }, ref) => {
                 )}
                 <div className="flex justify-end mt-1">
                     <button
-                        className="bg-purple-400 p-1 text-white"
+                        className="bg-purple-500 p-1 text-white"
                         type="submit"
                     >
+                        <PencilIcon className="inline-block h-3 w-3 mr-1" />
                         Vastaa
                     </button>
                 </div>

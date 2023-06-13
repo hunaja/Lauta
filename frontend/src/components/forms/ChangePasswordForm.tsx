@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
 
@@ -12,6 +12,7 @@ export default function ChangePasswordForm({ changePassword }: Props) {
         getValues,
         handleSubmit,
         setError,
+        setFocus,
         formState: { errors },
     } = useForm();
 
@@ -32,6 +33,10 @@ export default function ChangePasswordForm({ changePassword }: Props) {
             );
         });
     };
+
+    useEffect(() => {
+        setFocus("oldPassword");
+    }, [setFocus]);
 
     return (
         <div className="p-1">
