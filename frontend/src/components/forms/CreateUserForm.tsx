@@ -5,9 +5,9 @@ import { UserAddIcon } from "@heroicons/react/solid";
 import { User, UserForm, UserRole } from "../../types";
 import roles from "../../roles";
 
-type Props = {
+interface Props {
     createUser: (user: UserForm) => Promise<User>;
-};
+}
 
 export default function CreateUserForm({ createUser }: Props) {
     const { register, watch, handleSubmit, reset, setFocus } = useForm({

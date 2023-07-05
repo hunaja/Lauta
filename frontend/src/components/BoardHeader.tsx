@@ -33,6 +33,12 @@ export default function BoardHeader({
 
                 {" [ "}
                 <ul className="inline">
+                    <li className="inline">
+                        <Link to="/ukko">ukko</Link>
+                    </li>
+
+                    {boards.length ? " / " : ""}
+
                     {boards.map((board, index) => (
                         <li className="inline" key={board.id}>
                             <Link to={`/${board.path}`} key={board.id}>

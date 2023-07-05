@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { SaveIcon } from "@heroicons/react/solid";
 import { Board, BoardWithoutId } from "../../types";
@@ -14,13 +14,17 @@ export default function BoardForm({
     buttonText,
     onSubmit,
 }: BoardFormProps) {
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit, setFocus } = useForm({
         defaultValues: oldBoard,
     });
 
     const handleFormSubmit: SubmitHandler<FieldValues> = (data) => {
         onSubmit(data as BoardWithoutId);
     };
+
+    useEffect(() => {
+        setFocus("path");
+    }, [setFocus]);
 
     return (
         <div className="p-1">

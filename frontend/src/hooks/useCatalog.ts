@@ -2,22 +2,13 @@ import { useCallback } from "react";
 import useSWR from "swr";
 
 import { Board, ThreadForm } from "../types";
-import threadsService from "../services/threadsService";
+import boardsService from "../services/boardsService";
 
 export default function useCatalog(board?: Board, page = 1) {
-    const { data, mutate, error, isValidating } = useSWR(
+    const { data, mutate, error } = useSWR(
         board ? `/api/boards/${board.id}/threads?page=${page}` : null,
-        board ? async () => threadsService.getPreviews(board, page) : null,
-        {
-            revalidateIfStale: false,
-            revalidateOnFocus: false,
-            revalidateOnReconnect: true,
-        }
+        board ? async () => boardsService.getPreviews(board, page) : null
     );
-
-    const update = useCallback(() => {
-        mutate();
-    }, [mutate]);
 
     const create = useCallback(
         async (form: ThreadForm) => {
@@ -25,7 +16,7 @@ export default function useCatalog(board?: Board, page = 1) {
                 throw new Error("Board is not defined");
             }
 
-            const createdThread = await threadsService.create(board, form);
+            const createdThread = await boardsService.createThread(board, form);
             mutate(
                 (threads) =>
                     threads ? [createdThread, ...threads] : [createdThread],
@@ -37,5 +28,5 @@ export default function useCatalog(board?: Board, page = 1) {
         [board, mutate]
     );
 
-    return { threads: data, update, create, error, validating: isValidating };
+    return { threads: data, create, error };
 }

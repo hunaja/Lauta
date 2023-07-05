@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 import useBoard from "../hooks/useBoard";
 
@@ -10,8 +10,10 @@ import PostBoxBody from "./PostBoxThread";
 import useThread from "../hooks/useThread";
 import LoadingSpinner from "./LoadingSpinner";
 import NotFoundPage from "./NotFoundPage";
+import { Thread } from "../types";
 
 export default function ThreadPage() {
+    const navigate = useNavigate();
     const replyFormRef = useRef<ReplyFormRef>(null);
     const highlightedRef = useRef<HTMLDivElement>(null);
     const [highlightedRefReady, setHighlightedRefReady] = useState(false);
@@ -70,6 +72,13 @@ export default function ThreadPage() {
         replyFormRef?.current?.quotePost(postId);
     };
 
+    const deleteThread = async (thread1: Thread) => {
+        if (window.confirm("Haluatko varmasti poistaa langan?")) {
+            await remove(thread1);
+            navigate(`/${board.path}`);
+        }
+    };
+
     const title = thread.title || `Lanka #${thread.number}`;
     const pageTitle = `/${board.path}/ - ${title}`;
 
@@ -112,7 +121,7 @@ export default function ThreadPage() {
                                 deletePost={deletePost}
                                 deletePostFile={deletePostFile}
                                 setHighlightedMessage={setHighlightedMessage}
-                                deleteThread={remove}
+                                deleteThread={deleteThread}
                             />
                             <div className="clear-both sm:clear-none" />
                         </div>

@@ -3,19 +3,16 @@ import { User, UserForm } from "../types";
 
 const baseUrl = "/api/users";
 
-const getAllUsers = async (jwtToken: string): Promise<Array<User>> => {
-    const response = await axios.get(baseUrl, {
+const getAllUsers = async (jwtToken: string) => {
+    const response = await axios.get<User[]>(baseUrl, {
         headers: { Authorization: `Bearer ${jwtToken}` },
     });
 
     return response.data;
 };
 
-const createUser = async (
-    jwtToken: string,
-    userForm: UserForm
-): Promise<User> => {
-    const response = await axios.post(baseUrl, userForm, {
+const createUser = async (jwtToken: string, userForm: UserForm) => {
+    const response = await axios.post<User>(baseUrl, userForm, {
         headers: { Authorization: `Bearer ${jwtToken}` },
     });
 
@@ -27,7 +24,7 @@ const editUser = async (
     userId: string,
     userForm: UserForm
 ) => {
-    const response = await axios.put(`${baseUrl}/${userId}`, userForm, {
+    const response = await axios.put<User>(`${baseUrl}/${userId}`, userForm, {
         headers: { Authorization: `Bearer ${jwtToken}` },
     });
 
@@ -39,16 +36,14 @@ const changePassword = async (
     userId: string,
     oldPassword: string,
     newPassword: string
-): Promise<void> => {
-    const response = await axios.post(
+) => {
+    await axios.post(
         `${baseUrl}/${userId}/password`,
         { oldPassword, newPassword },
         {
             headers: { Authorization: `Bearer ${jwtToken}` },
         }
     );
-
-    return response.data;
 };
 
 const deleteUser = async (jwtToken: string, userId: string) => {

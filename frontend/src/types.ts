@@ -36,8 +36,12 @@ export interface Thread {
     title: string;
     fileReplyCount: number;
     replyCount: number;
-    bumpedAt: number;
+    bumpedAt: string;
     posts: Post[];
+}
+
+export interface CatalogThread extends Omit<Thread, "posts"> {
+    posts: [Post] | [];
 }
 
 export interface PostPreview extends Post {

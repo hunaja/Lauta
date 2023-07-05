@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import DashboardPage from "./components/DashboardPage";
 import RequireAuth from "./components/RequireAuth";
 import LoadingSpinner from "./components/LoadingSpinner";
 import RedirectToPost from "./components/RedirectToPost";
+import AllThreads from "./components/AllThreads";
 
 function App() {
     const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -63,6 +64,8 @@ function App() {
                         path="/post/:postNumber"
                         element={<RedirectToPost />}
                     />
+
+                    <Route path="/ukko" element={<AllThreads />} />
 
                     <Route path="/:boardPath" element={<HandleBoard />}>
                         <Route index element={<BoardIndex />} />

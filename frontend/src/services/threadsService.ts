@@ -1,54 +1,24 @@
 import axios from "axios";
-import {
-    Board,
-    Post,
-    PostForm,
-    PostPreview,
-    Thread,
-    ThreadForm,
-} from "../types";
+import { Post, PostForm, CatalogThread, Thread } from "../types";
 
-const boardsBaseUrl = (board: Board) => `/api/boards/${board.id}/threads`;
-
-const getPreviews = async (board: Board, page = 0): Promise<Thread[]> => {
-    const response = await axios.get(boardsBaseUrl(board), {
-        params: { page },
-    });
+const getAll = async () => {
+    const response = await axios.get<CatalogThread[]>("/api/threads");
     return response.data;
 };
 
-const create = async (
-    board: Board,
-    threadForm: ThreadForm
-): Promise<Thread> => {
-    const formData = new FormData();
-    formData.append("title", threadForm.title);
-    formData.append("text", threadForm.post.text);
-    formData.append("email", threadForm.post.email);
-    formData.append("author", threadForm.post.author);
-    if (threadForm.post.file) formData.append("file", threadForm.post.file);
-
-    const response = await axios.post(boardsBaseUrl(board), formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    });
+const getThreadByNumber = async (number: number) => {
+    const response = await axios.get<Thread>(`/api/threads/number/${number}`);
     return response.data;
 };
 
-const getThreadByNumber = async (number: number): Promise<Thread> => {
-    const response = await axios.get(`/api/threads/number/${number}`);
-    return response.data;
-};
-
-const reply = async (thread: Thread, postForm: PostForm): Promise<Post> => {
+const reply = async (thread: Thread, postForm: PostForm) => {
     const formData = new FormData();
     formData.append("text", postForm.text);
     formData.append("email", postForm.email);
     formData.append("author", postForm.author);
     if (postForm.file) formData.append("file", postForm.file);
 
-    const response = await axios.post(
+    const response = await axios.post<Post>(
         `/api/threads/${thread.id}/replies`,
         formData,
         {
@@ -60,7 +30,7 @@ const reply = async (thread: Thread, postForm: PostForm): Promise<Post> => {
     return response.data;
 };
 
-const remove = async (jwtToken: string, thread: Thread): Promise<void> => {
+const remove = async (jwtToken: string, thread: Thread) => {
     await axios.delete(`/api/threads/${thread.id}`, {
         headers: {
             Authorization: `Bearer ${jwtToken}`,
@@ -68,38 +38,11 @@ const remove = async (jwtToken: string, thread: Thread): Promise<void> => {
     });
 };
 
-const deletePost = async (jwtToken: string, post: Post): Promise<void> => {
-    await axios.delete(`/api/posts/${post.id}`, {
-        headers: {
-            Authorization: `Bearer ${jwtToken}`,
-        },
-    });
-};
-
-const getPostByNumber = async (postNumber: number) => {
-    const response = await axios.get<PostPreview>(
-        `/api/posts/number/${postNumber}`
-    );
-    return response.data;
-};
-
-const deletePostFile = async (jwtToken: string, post: Post): Promise<void> => {
-    await axios.delete(`/api/posts/${post.id}/file`, {
-        headers: {
-            Authorization: `Bearer ${jwtToken}`,
-        },
-    });
-};
-
 const threadsService = {
-    getPreviews,
-    create,
+    getAll,
     getThreadByNumber,
     remove,
     reply,
-    deletePost,
-    getPostByNumber,
-    deletePostFile,
 };
 
 export default threadsService;

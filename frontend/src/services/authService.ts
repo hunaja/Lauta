@@ -9,14 +9,14 @@ const authorize = async (loginForm: LoginForm): Promise<AuthorizedUser> => {
 const editUser = async (
     jwtToken: string,
     user: User & { password?: string }
-): Promise<User> => {
+) => {
     const userForm = {
         username: user.username,
         role: user.username,
         password: user.password,
     };
 
-    const response = await axios.put(`/api/users/${user.id}`, userForm, {
+    const response = await axios.put<User>(`/api/users/${user.id}`, userForm, {
         headers: {
             Authorization: `Bearer ${jwtToken}`,
         },

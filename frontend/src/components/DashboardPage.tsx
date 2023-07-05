@@ -5,7 +5,7 @@ import {
     UserAddIcon,
     XIcon,
 } from "@heroicons/react/solid";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
 
 import useStore from "../hooks/useAuthStore";
@@ -32,6 +32,10 @@ export default function DashboardPage() {
 
     const { users, create: createUser, update: editUser } = useUsers();
 
+    const editCallback = useCallback(() => {
+        setEditingUser(null);
+    }, []);
+
     if (!authorizedUser) return null;
 
     const toggleChangePassword = () => setEditingPassword(!editingPassword);
@@ -50,10 +54,6 @@ export default function DashboardPage() {
     };
     const startCreatingUser = () => setCreatingUser(true);
 
-    const editCallback = () => {
-        setEditingUser(null);
-    };
-
     return (
         <>
             <Helmet>
@@ -68,6 +68,17 @@ export default function DashboardPage() {
                         }`}</h3>
 
                         <div className="text-xs text-purple-400">
+                            {!editingPassword && !editingUsers && (
+                                <button
+                                    className="underline mr-2 hover:text-purple-500"
+                                    type="button"
+                                    onClick={() => logout()}
+                                >
+                                    <LogoutIcon className="inline-block h-3 w-3" />
+                                    Kirjaudu ulos
+                                </button>
+                            )}
+
                             <button
                                 className="underline mr-2 hover:text-purple-500"
                                 type="button"
@@ -86,17 +97,6 @@ export default function DashboardPage() {
                                         </>
                                     ))}
                             </button>
-
-                            {!editingPassword && !editingUsers && (
-                                <button
-                                    className="underline mr-2 hover:text-purple-500"
-                                    type="button"
-                                    onClick={() => logout()}
-                                >
-                                    <LogoutIcon className="inline-block h-3 w-3" />
-                                    Kirjaudu ulos
-                                </button>
-                            )}
                         </div>
                     </FrontPageBoxHeader>
 
@@ -105,6 +105,7 @@ export default function DashboardPage() {
                             <h3 className="text-xl">Vaihda salasanasi</h3>
                             <ChangePasswordForm
                                 changePassword={changePassword}
+                                callback={toggleChangePassword}
                             />
                         </div>
                     )}

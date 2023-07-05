@@ -4,7 +4,7 @@ import PhotographIcon from "@heroicons/react/solid/PhotographIcon";
 import { Link } from "react-router-dom";
 
 import { CatalogThread } from "../types";
-import useBoard from "../hooks/useBoard";
+import useBoards from "../hooks/useBoards";
 import formatPost from "../utils/formatPost";
 import useTimeAgo from "../hooks/useTimeAgo";
 
@@ -12,13 +12,15 @@ interface Props {
     thread: CatalogThread;
 }
 
-export default function BoardIndexBox({
+export default function AllThreadsBox({
     thread: {
         posts: [opPost],
         ...thread
     },
 }: Props) {
-    const board = useBoard();
+    const { boards } = useBoards();
+    const board = boards?.find((b) => b.id === thread.board);
+
     const timeAgo = useTimeAgo(opPost?.createdAt ?? thread.bumpedAt);
 
     if (!board) return null;
@@ -33,6 +35,10 @@ export default function BoardIndexBox({
                 className="text-black shrink overflow-hidden grow"
                 to={`/${board.path}/${thread.number}`}
             >
+                <span className="text-xs text-indigo-500">
+                    /{board.path}/ - {board.name}
+                </span>
+
                 {opPost?.file && (
                     <img
                         src={`/files/lauta-thumbnails/${opPost.id}.png`}
@@ -40,6 +46,7 @@ export default function BoardIndexBox({
                         className="mx-auto rounded"
                     />
                 )}
+
                 <div className="p-1 h-full">
                     <h4 className="text-lg">{thread.title}</h4>
                     {opPost?.number === thread.number ? (

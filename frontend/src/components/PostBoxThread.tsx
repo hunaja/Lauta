@@ -66,9 +66,10 @@ export default function PostBoxThread({
         quotePost(number);
     };
 
+    // TODO: Does this really work
     const authorColor = () => {
         if (post.saging) return "text-purple-700";
-        if (post.author && post.author !== "Anonyymi") return "text-purple-500";
+        if (post.author !== "Anonyymi") return "text-purple-500";
         return "text-purple-300";
     };
 

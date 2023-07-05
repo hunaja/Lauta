@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
 
-import { UserForm, UserRole } from "../../types";
+import { User, UserForm, UserRole } from "../../types";
 import roles from "../../roles";
 
 interface Props {
     id: string;
     defaultUsername: string;
     defaultRole: UserRole;
-    editUser: (id: string, user: UserForm) => Promise<void>;
+    editUser: (id: string, user: UserForm) => Promise<User>;
     callback: () => void;
 }
 

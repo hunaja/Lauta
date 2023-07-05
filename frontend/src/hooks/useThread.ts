@@ -4,6 +4,8 @@ import useSWR from "swr";
 import { Board, Post, PostForm, Thread, ThreadForm } from "../types";
 import threadsService from "../services/threadsService";
 import useAuthStore from "./useAuthStore";
+import postsService from "../services/postsService";
+import boardsService from "../services/boardsService";
 
 export default function useThread(board?: Board, threadNumber?: number) {
     const token = useAuthStore((state) => state.authorizedUser?.token);
@@ -30,7 +32,7 @@ export default function useThread(board?: Board, threadNumber?: number) {
                 throw new Error("Board is not defined");
             }
 
-            const createdThread = threadsService.create(board, form);
+            const createdThread = boardsService.createThread(board, form);
             mutate(createdThread, false);
 
             return createdThread;
@@ -94,7 +96,7 @@ export default function useThread(board?: Board, threadNumber?: number) {
                 throw new Error("Unauthorized");
             }
 
-            await threadsService.deletePost(token, post);
+            await postsService.deletePost(token, post);
 
             // Remove the reply from its thread
             const { posts: oldPosts, ...otherProps } = thread;
@@ -122,7 +124,7 @@ export default function useThread(board?: Board, threadNumber?: number) {
                 throw new Error("Unauthorized");
             }
 
-            await threadsService.deletePostFile(token, post);
+            await postsService.deletePostFile(token, post);
 
             // Remove the reply file from its thread
             const { posts: oldPosts, ...otherProps } = thread;

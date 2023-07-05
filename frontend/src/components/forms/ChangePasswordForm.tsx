@@ -2,11 +2,15 @@ import React, { useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { PencilIcon } from "@heroicons/react/solid";
 
-export type Props = {
+export interface Props {
+    callback: () => void;
     changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
-};
+}
 
-export default function ChangePasswordForm({ changePassword }: Props) {
+export default function ChangePasswordForm({
+    callback,
+    changePassword,
+}: Props) {
     const {
         register,
         getValues,
@@ -20,18 +24,22 @@ export default function ChangePasswordForm({ changePassword }: Props) {
         newPassword,
         oldPassword,
     }) => {
-        changePassword(oldPassword, newPassword).catch((e) => {
-            setError(
-                e.response?.data.field ?? "oldPassword",
-                {
-                    type: "api",
-                    message:
-                        e.response?.data.error ??
-                        "Salasanaa ei voitu vaihtaa tuntemattomasta syystä.",
-                },
-                { shouldFocus: true }
-            );
-        });
+        changePassword(oldPassword, newPassword)
+            .then(() => {
+                callback();
+            })
+            .catch((e) => {
+                setError(
+                    e.response?.data.field ?? "oldPassword",
+                    {
+                        type: "api",
+                        message:
+                            e.response?.data.error ??
+                            "Salasanaa ei voitu vaihtaa tuntemattomasta syystä.",
+                    },
+                    { shouldFocus: true }
+                );
+            });
     };
 
     useEffect(() => {
@@ -64,6 +72,11 @@ export default function ChangePasswordForm({ changePassword }: Props) {
                     className="w-full m-1 border-2 border-purple-200 focus:outline-none focus:border-purple-400 p-1"
                     placeholder="Salasana"
                 />
+                {errors.newPassword?.type === "required" && (
+                    <span className="pl-4 text-gray-400 text-sm">
+                        Edellytetty kenttä
+                    </span>
+                )}
                 <br />
                 <input
                     {...register("newPasswordAgain", {

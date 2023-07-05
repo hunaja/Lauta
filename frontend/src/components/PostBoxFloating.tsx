@@ -19,8 +19,8 @@ export default function PostBoxFloating({ thread, post }: Props) {
 
     const authorColor = () => {
         if (post.saging) return "text-purple-700";
-        if (post.author && post.author !== "Anonyymi") return "text-purple-500";
-        return "text-purple-400";
+        if (post.author !== "Anonyymi") return "text-purple-500";
+        return "text-purple-300";
     };
 
     const isOp = thread?.number === post.number;
