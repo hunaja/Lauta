@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-import { UserRole } from "../types";
+
+import { UserRole } from "../types.js";
 
 export type User = {
     id: string;
@@ -28,7 +29,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.set("toJSON", {
-    transform: (document, returnedObject) => {
+    transform: (_document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject.passwordHash;
         delete returnedObject._id;

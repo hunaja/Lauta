@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import mongoose, { LeanDocument } from "mongoose";
 
 import Thread from "../models/Thread.js";
 import Post from "../models/Post.js";
@@ -7,11 +8,28 @@ import uploadMiddleware from "../utils/uploadMiddleware.js";
 import { requireMinRole } from "../utils/authMiddleware.js";
 import { UserRole } from "../types.js";
 import InvalidRequestError from "../errors/InvalidRequestError.js";
-import { PostFile } from "../models/PostFile.js";
 import NotFoundError from "../errors/NotFoundError.js";
-import mongoose from "mongoose";
+import config from "../utils/config.js";
+import { PostFileInterface } from "../models/PostFile.js";
 
 const router = Router();
+
+router.get("/", async (req, res) => {
+    const postsPerThread = 1;
+
+    const page = Number(req.query.page) || 1;
+
+    const threads = await Thread.find()
+        .sort({ bumpedAt: -1 })
+        .skip((page - 1) * config.pageSize)
+        .limit(config.pageSize)
+        .populate({
+            path: "posts",
+            perDocumentLimit: postsPerThread,
+        });
+
+    res.json(threads);
+});
 
 // Get a thread by its number
 router.get("/number/:number", async (req, res) => {
@@ -21,7 +39,7 @@ router.get("/number/:number", async (req, res) => {
     const thread = await Thread.findOne({ number }).populate("posts");
     if (!thread) throw new NotFoundError("Thread not found");
 
-    res.json(thread);
+    return res.json(thread);
 });
 
 // Delete a thread
@@ -41,7 +59,7 @@ router.delete(
                 .filter((p) => p.file)
                 .map((post) =>
                     filesService.deleteFile(
-                        { ...post.toJSON(), file: post.file },
+                        { ...post.toObject(), file: post.file },
                         thread?.number === post.number
                     )
                 ),
@@ -82,60 +100,45 @@ router.post(
                 "Lanka vaatii joko kuvan tai tekstin."
             );
 
-        const session = await mongoose.startSession();
+        // Create a post
+        const newPost = new Post({
+            thread: thread._id,
+            text,
+            author,
+            saging,
+            createdAt,
+        });
+        const post = await newPost.save();
 
-        try {
-            // await session.startTransaction();
+        // Add the post to its thread
+        thread.posts = thread.posts.concat(
+            new mongoose.Types.ObjectId(post._id)
+        );
+        thread.replyCount = thread.replyCount + 1;
+        if (!saging) thread.bumpedAt = Date.now();
+        if (req.file) thread.fileReplyCount = thread.fileReplyCount + 1;
 
-            // Create a post
-            const newPost = new Post(
-                {
-                    thread: thread._id,
-                    text,
-                    author,
-                    saging,
-                    createdAt,
-                },
-                undefined,
-                { session }
-            );
-            const post = await newPost.save({ session });
+        await thread.save();
 
-            // Add the post to its thread
-            thread.posts = thread.posts.concat(post._id);
-            thread.replyCount = thread.replyCount + 1;
-            if (!saging) thread.bumpedAt = Date.now();
-            if (req.file) thread.fileReplyCount = thread.fileReplyCount + 1;
+        // Handle post uploads
+        if (req.file) {
+            const postFile: LeanDocument<PostFileInterface> = {
+                size: Math.floor(file.size / 1000),
+                // Name should be truncated to 50 characters
+                name: file.originalname.substring(0, 50),
+                mimeType: file.actualMimetype,
+                location: `${post._id}.${file.actualExt || "unknown"}`,
+                // TODO: Support spoilers
+                spoiler: false,
+            };
 
-            await thread.save({ session });
+            post.set("file", postFile);
+            await post.save();
 
-            // Handle post uploads
-            if (req.file) {
-                const postFile: PostFile = {
-                    size: Math.floor(file.size / 1000),
-                    // Name should be truncated to 50 characters
-                    name: file.originalname.substring(0, 50),
-                    mimeType: file.actualMimetype,
-                    location: `${post._id}.${file.actualExt || "unknown"}`,
-                    // TODO: Support spoilers
-                    spoiler: false,
-                };
-
-                post.file = postFile;
-                await post.save({ session });
-
-                await filesService.uploadFile(post, file);
-            }
-
-            // await session.commitTransaction();
-
-            res.json(post);
-        } catch (error) {
-            // await session.abortTransaction();
-            throw error;
-        } finally {
-            await session.endSession();
+            await filesService.uploadFile(post, file);
         }
+
+        res.json(post);
     }
 );
 

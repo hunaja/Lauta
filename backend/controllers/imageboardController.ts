@@ -4,14 +4,14 @@ import { bucketUrls } from "../utils/files.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
     res.json({
         thumbnailPath: bucketUrls.thumbnails,
         opThumbnailPath: bucketUrls.opThumbnails,
     });
 });
 
-router.get("/latest-images", async (req, res) => {
+router.get("/latest-images", async (_req, res) => {
     const posts = await Post.find(
         { file: { $exists: true } },
         "file createdAt number"

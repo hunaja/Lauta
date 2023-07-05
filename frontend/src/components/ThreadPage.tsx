@@ -15,7 +15,7 @@ import { Thread } from "../types";
 export default function ThreadPage() {
     const navigate = useNavigate();
     const replyFormRef = useRef<ReplyFormRef>(null);
-    const highlightedRef = useRef<HTMLDivElement>(null);
+    const highlightedRef = useRef<HTMLDivElement | null>(null);
     const [highlightedRefReady, setHighlightedRefReady] = useState(false);
 
     const { hash } = useLocation();

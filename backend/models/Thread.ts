@@ -1,8 +1,8 @@
-import mongoose, { PopulatedDoc } from "mongoose";
-import { Post } from "./Post";
-import { Board } from "./Board";
+import mongoose, { PopulatedDoc, Document } from "mongoose";
+import { Post } from "./Post.js";
+import { Board } from "./Board.js";
 
-export type Thread = {
+export interface Thread extends Document {
     id: string;
     number: number;
     board: PopulatedDoc<Board, mongoose.Types.ObjectId>;
@@ -13,11 +13,18 @@ export type Thread = {
     fileReplyCount: number;
     // Post ids are either populated or ObjectId
     posts: Array<PopulatedDoc<Post, mongoose.Types.ObjectId>>;
-};
+}
 
 const threadSchema = new mongoose.Schema({
-    number: { type: Number, required: true, unique: true },
-    board: { type: mongoose.Schema.Types.ObjectId, ref: "Board" },
+    number: {
+        type: Number,
+        required: true,
+        unique: true,
+    },
+    board: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Board",
+    },
     title: String,
     locked: { type: Boolean, default: false },
     bumpedAt: { type: Date, default: 0 },
@@ -33,7 +40,7 @@ const threadSchema = new mongoose.Schema({
 });
 
 threadSchema.set("toJSON", {
-    transform: (document, returnedObject) => {
+    transform: (_document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
         delete returnedObject.__v;

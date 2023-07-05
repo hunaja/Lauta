@@ -3,22 +3,20 @@ import sharp from "sharp";
 
 import config from "./config.js";
 import { UploadedFile } from "../types.js";
-import { PostFile } from "../models/PostFile.js";
 import { Post } from "../models/Post.js";
-
 const baseUrl = `http://${config.minioHost}:${config.minioPort}`;
 
 const buckets = {
     files: `${config.minioBucketPrefix}-files`,
     opthumbnails: `${config.minioBucketPrefix}-opthumbnails`,
     thumbnails: `${config.minioBucketPrefix}-thumbnails`,
-};
+} as const;
 
 export const bucketUrls = {
     files: `${baseUrl}/${buckets.files}`,
     opThumbnails: `${baseUrl}/${buckets.opthumbnails}`,
     thumbnails: `${baseUrl}/${buckets.thumbnails}`,
-};
+} as const;
 
 const client = new Client({
     endPoint: config.minioHost,
@@ -29,9 +27,7 @@ const client = new Client({
 });
 
 const initializeFiles = async () => {
-    const promises = Object.keys(buckets).map(async (name) => {
-        const fullName = buckets[name];
-
+    const promises = Object.entries(buckets).map(async ([name, fullName]) => {
         // Create the bucket if it does not exist
         if (!(await client.bucketExists(fullName))) {
             console.log(`Making a brand new bucket ${fullName}...`);
@@ -58,7 +54,10 @@ const initializeFiles = async () => {
     return Promise.all(promises);
 };
 
-const uploadFile = async (post, file: UploadedFile, opPost = false) => {
+const uploadFile = async (post: Post, file: UploadedFile, opPost = false) => {
+    if (!file.buffer) throw new Error("File has no buffer");
+    if (!post.file) throw new Error("Post has no file");
+
     const uploadPromises = [
         client.putObject(buckets.files, post.file.location, file.buffer),
     ];
@@ -91,7 +90,9 @@ const uploadFile = async (post, file: UploadedFile, opPost = false) => {
     await Promise.all(uploadPromises);
 };
 
-const deleteFile = async (post, opPost = false) => {
+const deleteFile = async (post: Post, opPost = false) => {
+    if (!post.file) throw new Error("Post has no file");
+
     const deletePromises = [
         client.removeObject(buckets.files, post.file.location),
         client.removeObject(buckets.thumbnails, `${post._id}.png`),
@@ -105,8 +106,9 @@ const deleteFile = async (post, opPost = false) => {
     await Promise.all(deletePromises);
 };
 
-const getFileBuffer = async (post) => {
+const getFileBuffer = async (post: Post) => {
     if (!post.file) throw new Error("Post has no file");
+
     return client.getObject(buckets.files, post.file.location);
 };
 

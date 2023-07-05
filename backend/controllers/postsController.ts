@@ -23,37 +23,51 @@ router.get("/number/:number", async (req, res) => {
     });
 });
 
-router.delete("/:id", requireMinRole(UserRole.MODERATOR), async (req, res) => {
-    const session = await mongoose.startSession();
+router.delete(
+    "/:id",
+    requireMinRole(UserRole.MODERATOR),
+    async (req: Request, res: Response) => {
+        const session = await mongoose.startSession();
 
-    try {
-        const post = await Post.findById(req.params.id, null, { session });
-        if (!post) throw new NotFoundError("Post not found");
+        try {
+            const post = await Post.findById(req.params.id, null, { session });
+            if (!post) throw new NotFoundError("Post not found");
 
-        const thread = await Thread.findById(post.thread, null, { session });
-        if (!thread) throw new NotFoundError("Thread not found");
+            const thread = await Thread.findById(post.thread, null, {
+                session,
+            });
+            if (!thread) throw new NotFoundError("Thread not found");
 
-        const isOp = thread.number === post.number;
+            const isOp = thread.number === post.number;
 
-        if (post.file) thread.fileReplyCount = thread.fileReplyCount - 1;
-        thread.replyCount = thread.replyCount - 1;
-        thread.posts = thread.posts.filter((p) => p !== post._id);
+            if (post.file) thread.fileReplyCount = thread.fileReplyCount - 1;
+            thread.replyCount = thread.replyCount - 1;
+            thread.posts = thread.posts.filter(
+                (p) => p.toString() !== post._id
+            );
 
-        await Promise.all([post.remove({ session }), thread.save({ session })]);
+            await Promise.all([
+                post.remove({ session }),
+                thread.save({ session }),
+            ]);
 
-        if (post.file)
-            await filesService.deleteFile({ ...post, file: post.file }, isOp);
+            if (post.file)
+                await filesService.deleteFile(
+                    { ...post, file: post.file },
+                    isOp
+                );
 
-        // await session.commitTransaction();
-    } catch (error) {
-        // await session.abortTransaction();
-        throw error;
-    } finally {
-        session.endSession();
+            // await session.commitTransaction();
+        } catch (error) {
+            // await session.abortTransaction();
+            throw error;
+        } finally {
+            session.endSession();
+        }
+
+        res.sendStatus(202);
     }
-
-    res.sendStatus(202);
-});
+);
 
 router.get("/:id/file", async (req, res) => {
     const post = await Post.findById(req.params.id, "file");
@@ -99,7 +113,9 @@ router.delete(
             // Do not leave empty posts
             if (!post.text?.trim()) {
                 promises.push(post.delete({ session }));
-                thread.posts = thread.posts.filter((p) => p !== post._id);
+                thread.posts = thread.posts.filter(
+                    (p) => p.toString() !== post._id
+                );
                 thread.replyCount = thread.replyCount - 1;
             } else {
                 post.file = undefined;

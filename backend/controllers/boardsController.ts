@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import mongoose from "mongoose";
+import mongoose, { LeanDocument } from "mongoose";
 
 import { requireMinRole } from "../utils/authMiddleware.js";
 import Board from "../models/Board.js";
@@ -10,12 +10,13 @@ import filesService from "../utils/files.js";
 import { UserRole } from "../types.js";
 import NotFoundError from "../errors/NotFoundError.js";
 import InvalidRequestError from "../errors/InvalidRequestError.js";
-import { PostFile } from "../models/PostFile.js";
+import config from "../utils/config.js";
+import { PostFileInterface } from "../models/PostFile.js";
 
 const router = Router();
 
 // Getting all boards
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
     const boards = await Board.find({});
     res.json(boards);
 });
@@ -78,7 +79,6 @@ router.delete(
 
 // Getting threads of a board
 router.get("/:id/threads", async (req, res) => {
-    const pageSize = 16;
     const postsPerThread = 1;
 
     // TODO: Implement different thread list modes here
@@ -92,8 +92,8 @@ router.get("/:id/threads", async (req, res) => {
     const threads = await Thread.find({
         board: new mongoose.Types.ObjectId(req.params.id),
     })
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
+        .skip((page - 1) * config.pageSize)
+        .limit(config.pageSize)
         .populate({
             path: "posts",
             perDocumentLimit: postsPerThread,
@@ -118,78 +118,59 @@ router.post(
         const createdAt = Date.now();
         const file = req.uploadedFile!;
 
-        const session = await mongoose.startSession();
+        const board = await Board.findById(req.params.id);
+        if (!board) throw new NotFoundError("Lautaa ei löytynyt.");
 
-        try {
-            const board = await Board.findById(req.params.id, null, {
-                session,
-            });
-            if (!board) throw new NotFoundError("Lautaa ei löytynyt.");
-
-            // Both file and text are required
-            if (!req.file || !text) {
-                const field = req.file ? "text" : "file";
-                throw new InvalidRequestError(
-                    field,
-                    "Lanka vaatii sekä kuvan että tekstin."
-                );
-            }
-
-            const newPost = new Post(
-                {
-                    text,
-                    email,
-                    author,
-                    createdAt,
-                },
-                undefined,
-                { session }
+        // Both file and text are required
+        if (!req.file || !text) {
+            const field = req.file ? "text" : "file";
+            throw new InvalidRequestError(
+                field,
+                "Lanka vaatii sekä kuvan että tekstin."
             );
-            const post = await newPost.save({ session });
-
-            // Create a thread for the OP post
-            const newThread = new Thread(
-                {
-                    number: post.number,
-                    board: board._id,
-                    title: body.title,
-                    posts: [post._id],
-                    bumpedAt: createdAt,
-                    createdAt,
-                },
-                undefined,
-                { session }
-            );
-            const thread = await newThread.save({ session });
-
-            const postFile: PostFile = {
-                size: Math.floor(file.size / 1000),
-                // Name should be truncated to 50 characters
-                name: file.originalname.substring(0, 50),
-                mimeType: file.actualMimetype,
-                location: `${post._id}.${file.actualExt || "unknown"}`,
-                // TODO: Support spoilers
-                spoiler: false,
-            };
-
-            post.thread = thread._id;
-            post.file = postFile;
-            await post.save({ session });
-
-            await thread.populate("posts", undefined, undefined, {
-                session,
-            });
-
-            await filesService.uploadFile(post, file, true);
-            // await session.commitTransaction();
-
-            res.json(thread);
-        } catch (error) {
-            // await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
         }
+
+        const newPost = new Post(
+            {
+                text,
+                email,
+                author,
+                createdAt,
+            },
+            undefined
+        );
+        const post = await newPost.save();
+
+        // Create a thread for the OP post
+        const newThread = new Thread({
+            number: post.number,
+            board: board._id,
+            title: body.title,
+            posts: [post._id],
+            bumpedAt: createdAt,
+            createdAt,
+        });
+        const thread = await newThread.save();
+
+        const postFile: LeanDocument<PostFileInterface> = {
+            size: Math.floor(file.size / 1000),
+            // Name should be truncated to 50 characters
+            name: file.originalname.substring(0, 50),
+            mimeType: file.actualMimetype,
+            location: `${post._id}.${file.actualExt || "unknown"}`,
+            // TODO: Support spoilers
+            spoiler: false,
+        };
+
+        post.thread = thread._id;
+        post.set("file", postFile);
+        await post.save();
+
+        await thread.populate("posts", undefined, undefined, {});
+
+        await filesService.uploadFile(post, file, true);
+
+        res.json(thread);
     }
 );
 

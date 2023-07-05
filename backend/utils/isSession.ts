@@ -1,4 +1,4 @@
-import { Session, UserRole } from "../types";
+import { Session, UserRole } from "../types.js";
 
 export default function isSession(s: unknown): s is Session {
     return (

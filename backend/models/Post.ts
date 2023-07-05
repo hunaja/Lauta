@@ -1,18 +1,19 @@
 import mongoose, { PopulatedDoc } from "mongoose";
 import autoIncrementFactory from "mongoose-sequence";
 
-import PostFile, { PostFile as PostFileType } from "./PostFile.js";
+import PostFile, { PostFileInterface } from "./PostFile.js";
+import { Thread } from "./Thread.js";
 
 const AutoIncrement = autoIncrementFactory(mongoose);
 
 // Post ts interface
-export interface Post {
+export interface Post extends Document {
     _id: string;
     number: number;
     text: string;
     author?: string;
-    file?: PostFileType;
-    thread: PopulatedDoc<Post, mongoose.Types.ObjectId>;
+    file?: PostFileInterface;
+    thread: PopulatedDoc<Thread, mongoose.Types.ObjectId>;
     createdAt: string;
     editedAt: string | null;
     saging: boolean;
@@ -44,7 +45,7 @@ const postSchema = new mongoose.Schema({
 });
 
 postSchema.set("toJSON", {
-    transform: (document, returnedObject) => {
+    transform: (_document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject.thread;
         delete returnedObject.passwordHash;
@@ -55,4 +56,4 @@ postSchema.set("toJSON", {
 
 postSchema.plugin(AutoIncrement, { inc_field: "number" });
 
-export default mongoose.model("Post", postSchema);
+export default mongoose.model<Post>("Post", postSchema);

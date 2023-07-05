@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
 import mongoose from "mongoose";
 
-import InsufficientPermissionsError from "../errors/InsufficentPermissionsError";
-import NotFoundError from "../errors/NotFoundError";
-import AuthRequiredError from "../errors/AuthRequiredError";
-import InvalidRequestError from "../errors/InvalidRequestError";
-import { logError } from "./logger";
+import InsufficientPermissionsError from "../errors/InsufficentPermissionsError.js";
+import NotFoundError from "../errors/NotFoundError.js";
+import AuthRequiredError from "../errors/AuthRequiredError.js";
+import InvalidRequestError from "../errors/InvalidRequestError.js";
+import { logError } from "./logger.js";
 
 const { TokenExpiredError } = jsonwebtoken;
 

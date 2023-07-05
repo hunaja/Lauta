@@ -3,18 +3,19 @@ import { fileTypeFromBuffer } from "file-type";
 
 import config from "./config.js";
 import { Request, Response, NextFunction } from "express";
+import InvalidRequestError from "../errors/InvalidRequestError.js";
 
 const upload = multer({
     limits: {
         files: 1,
-        fileSize: 5120000,
+        fileSize: config.maxFileSize,
     },
 }).single("file");
 
 const handleMulterError = (
     error: unknown,
-    req: Request,
-    res: Response,
+    _req: Request,
+    _res: Response,
     next: NextFunction
 ) => {
     // Set by the preceding middleware
@@ -24,7 +25,7 @@ const handleMulterError = (
                 ? "Tiedosto on liian suuri."
                 : "Tapahtui tuntematon virhe tiedoston käsittelemisessä.";
 
-        return res.status(400).json({ error: errorMsg, field: "file" });
+        throw new InvalidRequestError(errorMsg, "file");
     }
 
     next();
@@ -32,7 +33,7 @@ const handleMulterError = (
 
 const validateExtension = async (
     req: Request,
-    res: Response,
+    _res: Response,
     next: NextFunction
 ) => {
     const { file } = req;
@@ -43,10 +44,10 @@ const validateExtension = async (
             !fileData?.mime || !config.allowedMimeTypes.includes(fileData.mime);
 
         if (unallowedExtension)
-            return res.status(400).json({
-                error: "Antamaasi tiedostomuotoa ei tueta.",
-                field: "file",
-            });
+            throw new InvalidRequestError(
+                "Antamaasi tiedostomuotoa ei tueta.",
+                "file"
+            );
 
         req.uploadedFile = {
             ...file,

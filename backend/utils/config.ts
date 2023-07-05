@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-import { UserRole } from "../types";
+import { UserRole } from "../types.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -22,6 +22,9 @@ export default {
     minioAccessKey: process.env.MINIO_ACCESS_KEY!,
     minioSecretKey: process.env.MINIO_SECRET_KEY!,
     minioBucketPrefix: "lauta",
+
+    pageSize: 16,
+    maxFileSize: 5 * 1024 * 1024,
 
     allowedMimeTypes: ["image/jpeg", "image/gif", "image/png"],
 };

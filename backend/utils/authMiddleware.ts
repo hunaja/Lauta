@@ -22,7 +22,7 @@ export const extractToken = (
 
 export const extractUser = (
     req: Request,
-    res: Response,
+    _res: Response,
     next: NextFunction
 ) => {
     const session = req.token && jwt.verify(req.token, config.jwtSecret);
@@ -34,7 +34,7 @@ export const extractUser = (
 };
 
 const requireMinRole0 =
-    (role: UserRole) => (req: Request, res: Response, next: NextFunction) => {
+    (role: UserRole) => (req: Request, _res: Response, next: NextFunction) => {
         if (!req.session)
             throw new AuthRequiredError("Kirjautuminen vaaditaan.");
 

@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { type Document } from "mongoose";
 
-export type PostFile = {
+export interface PostFileInterface extends Document {
     name: string;
     mimeType: string;
     location: string;
     size: number;
     spoiler: boolean;
-};
+}
 
-const postFileSchema = new mongoose.Schema<PostFile>(
+const postFileSchema = new mongoose.Schema<PostFileInterface>(
     {
         name: {
             type: String,
@@ -24,7 +24,7 @@ const postFileSchema = new mongoose.Schema<PostFile>(
 );
 
 postFileSchema.set("toJSON", {
-    transform: (document, returnedObject) => {
+    transform: (_document, returnedObject) => {
         delete returnedObject.mimeType;
         delete returnedObject.location;
     },

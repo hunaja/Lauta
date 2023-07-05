@@ -16,7 +16,7 @@ const router = Router();
 router.get(
     "/",
     requireMinRole(UserRole.ADMIN),
-    async (req: Request, res: Response) => {
+    async (_req: Request, res: Response) => {
         const users = await User.find({});
         res.json(users);
     }
@@ -43,9 +43,15 @@ router.post("/:id/password", extractUser, async (req, res) => {
         body: { oldPassword, newPassword },
     } = req;
 
+    if (!oldPassword || typeof oldPassword !== "string")
+        throw new InsufficientPermissionsError("Vanha salasana puuttuu.");
+
+    if (!newPassword || typeof newPassword !== "string")
+        throw new InsufficientPermissionsError("Uusi salasana puuttuu.");
+
     // Each user can only edit their own password
     if (req.params.id !== req.session!.id)
-        return new InsufficientPermissionsError(
+        throw new InsufficientPermissionsError(
             "Et voi muokata tätä käyttäjää."
         );
 
@@ -54,10 +60,12 @@ router.post("/:id/password", extractUser, async (req, res) => {
         targetUser &&
         (await bcrypt.compare(oldPassword, targetUser.passwordHash));
     if (!oldCorrect)
-        return new InsufficentPermissionsError("Väärä entinen salasana.");
+        throw new InsufficentPermissionsError("Väärä entinen salasana.");
 
     targetUser.passwordHash = await bcrypt.hash(newPassword, config.hashRounds);
     await targetUser.save();
+
+    return res.sendStatus(204);
 });
 
 // Editing user's username or role
