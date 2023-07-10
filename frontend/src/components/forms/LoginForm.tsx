@@ -38,27 +38,56 @@ export default function LoginForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <input
-                {...register("username")}
-                className="border-2 p-1 w-full border-purple-200 focus:outline-none focus:border-purple-400"
-                placeholder="Käyttäjännimi"
-            />
-            {errors.username?.type === "api" && (
-                <span className="pl-4 text-gray-400 text-sm">
-                    {errors.username.message}
+            <label htmlFor="username" className="text-sm">
+                <span className="sr-only">Käyttäjännimi</span>
+                <input
+                    {...register("username", {
+                        required: true,
+                    })}
+                    className="border-2 p-1 w-full border-purple-200 focus:outline-none focus:border-purple-400"
+                    placeholder="Käyttäjännimi"
+                    id="username"
+                    aria-invalid={Boolean(errors.username)}
+                    aria-errormessage="username-error"
+                />
+            </label>
+            {Boolean(errors.username) && (
+                <span
+                    className="pl-4 text-gray-400 text-sm"
+                    id="username-error"
+                    role="alert"
+                >
+                    {errors.username.type === "api" && errors.username.message}
+                    {errors.username.type !== "api" &&
+                        "Käyttäjännimi on pakollinen kenttä."}
                 </span>
             )}
 
             <br />
-            <input
-                {...register("password")}
-                className="border-2 p-1 mt-1 w-full border-purple-200 focus:outline-none focus:border-purple-400"
-                type="password"
-                placeholder="Salasana"
-            />
-            {errors.password?.type === "api" && (
-                <span className="pl-4 text-gray-400 text-sm">
-                    {errors.password.message}
+
+            <label htmlFor="password" className="text-sm">
+                <span className="sr-only">Salasana</span>
+                <input
+                    {...register("password", {
+                        required: true,
+                    })}
+                    className="border-2 p-1 mt-1 w-full border-purple-200 focus:outline-none focus:border-purple-400"
+                    type="password"
+                    placeholder="Salasana"
+                    id="password"
+                    aria-invalid={Boolean(errors.username)}
+                    aria-errormessage="password-error"
+                />
+            </label>
+            {Boolean(errors.password) && (
+                <span
+                    className="pl-4 text-gray-400 text-sm"
+                    id="password-error"
+                    role="alert"
+                >
+                    {errors.password.type === "api" && errors.password.message}
+                    {errors.password.type !== "api" &&
+                        "Salasana on pakollinen kenttä."}
                 </span>
             )}
 

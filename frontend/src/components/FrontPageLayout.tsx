@@ -1,6 +1,7 @@
 import React from "react";
 
 import BoardHeader from "./BoardHeader";
+import logo from "../logo.png";
 
 interface FrontPageLayoutProperties {
     children: any;
@@ -13,7 +14,7 @@ export default function FrontPageLayout({
         <>
             <BoardHeader showBoardHeader={false}>
                 <img
-                    src="/logo.png"
+                    src={logo}
                     className="mx-auto mt-8 h-48 w-96 text-center"
                     alt="Lauta Logo"
                 />
