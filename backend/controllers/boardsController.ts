@@ -79,7 +79,12 @@ router.delete(
 
 // Getting threads of a board
 router.get("/:id/threads", async (req, res) => {
-    const postsPerThread = 1;
+    const mode = req.query.mode === "catalog" ? "catalog" : "default";
+
+    // TODO: Enum for this
+    const pageSize =
+        mode === "catalog" ? config.catalogPageSize : config.pageSize;
+    const postsPerThread = mode === "catalog" ? 1 : 6;
 
     // TODO: Implement different thread list modes here
     const page = Number(req.query.page) || 2;
@@ -92,8 +97,8 @@ router.get("/:id/threads", async (req, res) => {
     const threads = await Thread.find({
         board: new mongoose.Types.ObjectId(req.params.id),
     })
-        .skip((page - 1) * config.pageSize)
-        .limit(config.pageSize)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
         .populate({
             path: "posts",
             perDocumentLimit: postsPerThread,
@@ -166,7 +171,7 @@ router.post(
         post.set("file", postFile);
         await post.save();
 
-        await thread.populate("posts", undefined, undefined, {});
+        await thread.populate("posts");
 
         await filesService.uploadFile(post, file, true);
 

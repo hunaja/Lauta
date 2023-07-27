@@ -5,7 +5,6 @@ import Thread from "../models/Thread.js";
 import { requireMinRole } from "../utils/authMiddleware.js";
 import filesService from "../utils/files.js";
 import { UserRole } from "../types.js";
-import mongoose from "mongoose";
 import NotFoundError from "../errors/NotFoundError.js";
 
 const router = Router();
@@ -27,43 +26,24 @@ router.delete(
     "/:id",
     requireMinRole(UserRole.MODERATOR),
     async (req: Request, res: Response) => {
-        const session = await mongoose.startSession();
+        const post = await Post.findById(req.params.id);
+        if (!post) throw new NotFoundError("Post not found");
 
-        try {
-            const post = await Post.findById(req.params.id, null, { session });
-            if (!post) throw new NotFoundError("Post not found");
+        const thread = await Thread.findById(post.thread);
+        if (!thread) throw new NotFoundError("Thread not found");
 
-            const thread = await Thread.findById(post.thread, null, {
-                session,
-            });
-            if (!thread) throw new NotFoundError("Thread not found");
-
-            const isOp = thread.number === post.number;
-
+        const isOp = thread.number === post.number;
+        if (!isOp) {
             if (post.file) thread.fileReplyCount = thread.fileReplyCount - 1;
             thread.replyCount = thread.replyCount - 1;
-            thread.posts = thread.posts.filter(
-                (p) => p.toString() !== post._id
-            );
-
-            await Promise.all([
-                post.remove({ session }),
-                thread.save({ session }),
-            ]);
-
-            if (post.file)
-                await filesService.deleteFile(
-                    { ...post, file: post.file },
-                    isOp
-                );
-
-            // await session.commitTransaction();
-        } catch (error) {
-            // await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
         }
+
+        thread.posts = thread.posts.filter((p) => p.toString() !== post._id);
+
+        await Promise.all([post.remove(), thread.save()]);
+
+        if (post.file)
+            await filesService.deleteFile({ ...post, file: post.file }, isOp);
 
         res.sendStatus(202);
     }
@@ -91,49 +71,38 @@ router.delete(
     "/:id/file",
     requireMinRole(UserRole.ADMIN),
     async (req: Request, res: Response) => {
-        const session = await mongoose.startSession();
+        const post = await Post.findById(req.params.id);
+        if (!post) throw new NotFoundError("Post not found");
 
-        try {
-            const post = await Post.findById(req.params.id, null, { session });
-            if (!post) throw new NotFoundError("Post not found");
+        const thread = await Thread.findById(post.thread);
+        if (!thread) throw new NotFoundError("Thread not found");
 
-            const thread = await Thread.findById(post.thread, null, {
-                session,
-            });
-            if (!thread) throw new NotFoundError("Thread not found");
+        const postFile = post?.file;
+        if (!postFile) throw new NotFoundError("Post file not found");
 
-            const postFile = post?.file;
-            if (!postFile) throw new NotFoundError("Post file not found");
+        const isOp = thread.number === post.number;
+        const promises: Promise<any>[] = [];
 
-            const isOp = thread.number === post.number;
-            const promises: Promise<any>[] = [];
+        if (!isOp) thread.fileReplyCount = thread.fileReplyCount - 1;
 
-            thread.fileReplyCount = thread.fileReplyCount - 1;
-
-            // Do not leave empty posts
-            if (!post.text?.trim()) {
-                promises.push(post.delete({ session }));
-                thread.posts = thread.posts.filter(
-                    (p) => p.toString() !== post._id
-                );
-                thread.replyCount = thread.replyCount - 1;
-            } else {
-                post.file = undefined;
-                promises.push(post.save({ session }));
-            }
-
-            promises.push(thread.save({ session }));
-            await Promise.all(promises);
-
-            await filesService.deleteFile({ ...post, file: postFile }, isOp);
-
-            res.sendStatus(202);
-        } catch (error) {
-            // await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
+        // Do not leave empty posts
+        if (!post.text?.trim()) {
+            promises.push(post.delete());
+            thread.posts = thread.posts.filter(
+                (p) => p.toString() !== post._id
+            );
+            if (!isOp) thread.replyCount = thread.replyCount - 1;
+        } else {
+            post.file = undefined;
+            promises.push(post.save());
         }
+
+        promises.push(thread.save());
+        await Promise.all(promises);
+
+        await filesService.deleteFile({ ...post, file: postFile }, isOp);
+
+        res.sendStatus(202);
     }
 );
 

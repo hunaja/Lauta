@@ -23,7 +23,8 @@ export default {
     minioSecretKey: process.env.MINIO_SECRET_KEY!,
     minioBucketPrefix: "lauta",
 
-    pageSize: 16,
+    pageSize: 8,
+    catalogPageSize: 16,
     maxFileSize: 5 * 1024 * 1024,
 
     allowedMimeTypes: ["image/jpeg", "image/gif", "image/png"],

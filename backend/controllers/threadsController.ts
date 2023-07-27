@@ -34,9 +34,17 @@ router.get("/", async (req, res) => {
 // Get a thread by its number
 router.get("/number/:number", async (req, res) => {
     const number = Number(req.params.number);
-    if (Number.isNaN(number)) return res.sendStatus(400);
+    if (Number.isNaN(number))
+        return res.status(400).json({ error: "Invalid thread number" });
 
-    const thread = await Thread.findOne({ number }).populate("posts");
+    const preview = req.query.preview === "true";
+
+    const thread = await Thread.findOne({ number }).populate({
+        path: "posts",
+        options: {
+            limit: preview ? 6 : undefined,
+        },
+    });
     if (!thread) throw new NotFoundError("Thread not found");
 
     return res.json(thread);

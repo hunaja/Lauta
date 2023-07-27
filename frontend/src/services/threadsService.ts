@@ -6,8 +6,10 @@ const getAll = async () => {
     return response.data;
 };
 
-const getThreadByNumber = async (number: number) => {
-    const response = await axios.get<Thread>(`/api/threads/number/${number}`);
+const getThreadByNumber = async (number: number, preview: boolean) => {
+    const response = await axios.get<Thread>(
+        `/api/threads/number/${number}?preview=${preview}`
+    );
     return response.data;
 };
 
