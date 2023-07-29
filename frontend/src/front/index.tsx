@@ -208,6 +208,8 @@ export default function FrontPage() {
                             <h3>Uusimmat kuvat</h3>
                         </FrontPageBoxHeader>
 
+                        {latestImages.length === 0 && <i>Ei uusia kuvia.</i>}
+
                         <ul className="grid place-items-center grid-cols-5 gap-4">
                             {latestImages.map((image) => (
                                 <li key={image.id}>

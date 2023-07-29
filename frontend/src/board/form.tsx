@@ -51,7 +51,7 @@ const ThreadForm = forwardRef<Ref, Props>(({ board, trigger }, ref) => {
 
         trigger(form)
             .then((createdThread) =>
-                navigate(`/${board.path}/${createdThread.number}`)
+                navigate(`/${board.path}/${createdThread.id}`)
             )
             .catch((e) => {
                 setError(

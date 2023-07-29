@@ -9,6 +9,8 @@ export default function HandleBoard() {
 
     const selectedBoard = boards?.find((board) => board.path === boardPath);
 
+    console.log("Selected board:", selectedBoard);
+
     if (error || (boards && !selectedBoard)) {
         return <NotFoundPage />;
     }

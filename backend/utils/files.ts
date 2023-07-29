@@ -3,7 +3,7 @@ import sharp from "sharp";
 
 import config from "./config.js";
 import { UploadedFile } from "../types.js";
-import { Post } from "../models/Post.js";
+import { File, Post } from "@prisma/client";
 const baseUrl = `http://${config.minioHost}:${config.minioPort}`;
 
 const buckets = {
@@ -54,9 +54,12 @@ const initializeFiles = async () => {
     return Promise.all(promises);
 };
 
-const uploadFile = async (post: Post, file: UploadedFile, opPost = false) => {
+const uploadFile = async (
+    post: Post & { file: File },
+    file: UploadedFile,
+    opPost = false
+) => {
     if (!file.buffer) throw new Error("File has no buffer");
-    if (!post.file) throw new Error("Post has no file");
 
     const uploadPromises = [
         client.putObject(buckets.files, post.file.location, file.buffer),
@@ -68,7 +71,7 @@ const uploadFile = async (post: Post, file: UploadedFile, opPost = false) => {
         .toFormat("png")
         .toBuffer();
     uploadPromises.push(
-        client.putObject(buckets.thumbnails, `${post._id}.png`, thumbnailBuffer)
+        client.putObject(buckets.thumbnails, `${post.id}.png`, thumbnailBuffer)
     );
 
     // Creating an another, bigger thumbnail for the post (if it starts a thread)
@@ -81,7 +84,7 @@ const uploadFile = async (post: Post, file: UploadedFile, opPost = false) => {
         uploadPromises.push(
             client.putObject(
                 buckets.opthumbnails,
-                `${post._id}.png`,
+                `${post.id}.png`,
                 opThumbnailBuffer
             )
         );
@@ -90,25 +93,21 @@ const uploadFile = async (post: Post, file: UploadedFile, opPost = false) => {
     await Promise.all(uploadPromises);
 };
 
-const deleteFile = async (post: Post, opPost = false) => {
-    if (!post.file) throw new Error("Post has no file");
-
+const deleteFile = async (post: Post & { file: File }, opPost = false) => {
     const deletePromises = [
         client.removeObject(buckets.files, post.file.location),
-        client.removeObject(buckets.thumbnails, `${post._id}.png`),
+        client.removeObject(buckets.thumbnails, `${post.id}.png`),
     ];
 
     if (opPost)
         deletePromises.push(
-            client.removeObject(buckets.opthumbnails, `${post._id}.png`)
+            client.removeObject(buckets.opthumbnails, `${post.id}.png`)
         );
 
     await Promise.all(deletePromises);
 };
 
-const getFileBuffer = async (post: Post) => {
-    if (!post.file) throw new Error("Post has no file");
-
+const getFileBuffer = async (post: Post & { file: File }) => {
     return client.getObject(buckets.files, post.file.location);
 };
 

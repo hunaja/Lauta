@@ -3,16 +3,22 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import config from "../utils/config.js";
-import User from "../models/User.js";
+import database from "../utils/database.js";
 
 const router = Router();
 
 // Logging in
+// TODO: Refresh tokens
 router.post("/", async (req, res) => {
     const {
         body: { username, password },
     } = req;
-    const user = await User.findOne({ username });
+
+    const user = await database.user.findUnique({
+        where: {
+            username,
+        },
+    });
 
     const correctPassword =
         user && (await bcrypt.compare(password, user.passwordHash));
@@ -22,14 +28,14 @@ router.post("/", async (req, res) => {
             .json({ error: "Virheellinen käyttäjätunnus tai salasana." });
 
     const signedUser = {
-        id: user._id.toString(),
+        id: user.id,
         role: user.role,
     };
 
     const token = jwt.sign(signedUser, config.jwtSecret);
 
     return res.json({
-        id: user._id,
+        id: user.id,
         username: user.username,
         role: user.role,
         token,

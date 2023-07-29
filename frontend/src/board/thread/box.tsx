@@ -63,7 +63,7 @@ export default function PostBoxThread({
     };
 
     const renderPostBox = (postNumber: number) => {
-        const boxPost = thread.posts.find((p) => p.number === postNumber);
+        const boxPost = thread.posts.find((p) => p.id === postNumber);
         if (!boxPost) return <PostBoxFloatingFromId postNumber={postNumber} />;
 
         return <PostBoxFloating thread={thread} post={boxPost} />;
@@ -71,16 +71,16 @@ export default function PostBoxThread({
 
     const onQuoteClick = (
         event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-        number: number
+        id: number
     ) => {
-        if (thread.posts.some((p) => p.number === number) && !preview) {
+        if (thread.posts.some((p) => p.id === id) && !preview) {
             event.preventDefault();
-            navigate(`#${number}`);
-            setHighlightedMessage(number);
+            navigate(`#${id}`);
+            setHighlightedMessage(id);
         }
     };
 
-    const isOp = thread?.number === post.number;
+    const isOp = thread?.id === post.id;
 
     const fullUrl = `/api/posts/${post.id}/file`;
 
@@ -116,15 +116,19 @@ export default function PostBoxThread({
                     isOp && post.file && !imageOpened ? "pl-5" : ""
                 }`}
             >
-                <b className={`${authorColor()}`}>
+                <b
+                    className={`${post.saging ? "text-purple-700 " : ""}${
+                        post.author !== "Anonyymi" ? "text-purple-500" : ""
+                    }${authorColor()}`}
+                >
                     {post.author ?? "Anonyymi"}
                 </b>
                 {" • "}
                 <Link
-                    to={`/${board.path}/${thread.number}#${post.number}`}
-                    onClick={(event) => onIdClick(event, post.number)}
+                    to={`/${board.path}/${thread.id}#${post.id}`}
+                    onClick={(event) => onIdClick(event, post.id)}
                 >
-                    {`No. ${post.number}`}
+                    {`No. ${post.id}`}
                 </Link>
                 {" • "}
                 <time>{timeAgo}</time>

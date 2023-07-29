@@ -1,0 +1,68 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+enum UserRole {
+    ADMIN
+    MODERATOR
+    TRAINEE
+}
+
+model User {
+    id           Int      @id @default(autoincrement())
+    username     String   @unique
+    email        String   @unique
+    passwordHash String
+    role         UserRole @default(TRAINEE)
+}
+
+model Board {
+    id     Int      @id @default(autoincrement())
+    name   String
+    path   String   @unique
+    title  String
+    Thread Thread[]
+}
+
+model File {
+    id       Int     @id @default(autoincrement())
+    name     String
+    mime     String
+    location String
+    size     Int
+    spoiler  Boolean
+
+    postId Int  @unique
+    post   Post @relation(fields: [postId], references: [id])
+}
+
+model Thread {
+    boardId        Int
+    board          Board    @relation(fields: [boardId], references: [id])
+    title          String
+    locked         Boolean  @default(false)
+    bumpedAt       DateTime
+    replyCount     Int      @default(0)
+    fileReplyCount Int      @default(0)
+
+    id    Int    @unique
+    posts Post[]
+}
+
+model Post {
+    id           Int       @id @default(autoincrement())
+    text         String
+    author       String?
+    createdAt    DateTime  @default(now())
+    editedAt     DateTime?
+    passwordHash String?
+
+    file     File?
+    threadId Int?
+    Thread   Thread? @relation(fields: [threadId], references: [id])
+}

@@ -1,10 +1,4 @@
-import { User } from "./models/User.js";
-
-export enum UserRole {
-    ADMIN = "SOPSY",
-    MODERATOR = "MODERATOR",
-    TRAINEE = "JANNY",
-}
+import { User } from "@prisma/client";
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

@@ -3,12 +3,12 @@ import cors from "cors";
 import errorHandler from "./utils/errorHandlerMiddleware.js";
 import { extractToken } from "./utils/authMiddleware.js";
 
-import imageboardController from "./controllers/imageboardController.js";
-import boardsController from "./controllers/boardsController.js";
-import threadsController from "./controllers/threadsController.js";
-import postsController from "./controllers/postsController.js";
-import authorizeController from "./controllers/authorizeController.js";
-import usersController from "./controllers/usersController.js";
+import imageboardController from "./controllers/imageboard.js";
+import boardsController from "./controllers/boards.js";
+import threadsController from "./controllers/threads.js";
+import postsController from "./controllers/posts.js";
+import authorizeController from "./controllers/authorize.js";
+import usersController from "./controllers/users.js";
 
 const app = express();
 

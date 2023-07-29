@@ -33,7 +33,7 @@ export default function AllThreadsBox({
         >
             <Link
                 className="text-black shrink overflow-hidden grow"
-                to={`/${board.path}/${thread.number}`}
+                to={`/${board.path}/${thread.id}`}
             >
                 <span className="text-xs text-indigo-500">
                     /{board.path}/ - {board.name}
@@ -49,7 +49,7 @@ export default function AllThreadsBox({
 
                 <div className="p-1 h-full">
                     <h4 className="text-lg">{thread.title}</h4>
-                    {opPost?.number === thread.number ? (
+                    {opPost?.id === thread.id ? (
                         opPost.text && formatPost(opPost.text.slice(0, 100))
                     ) : (
                         <span className="text-gray-500 bold">

@@ -35,8 +35,8 @@ export default function Thread({
         number | undefined
     >(highlighted);
 
-    const opPost = thread.posts.find((p) => p.number === thread.number);
-    const replies = thread.posts.filter((p) => p.number !== thread.number);
+    const opPost = thread.posts.find((p) => p.id === thread.id);
+    const replies = thread.posts.filter((p) => p.id !== thread.id);
 
     const quotePost = (postId: number) => {
         replyFormRef?.current?.quotePost(postId);
@@ -66,9 +66,7 @@ export default function Thread({
                     <div className="text-sm text-gray-500">
                         <b className="text-purple-300">Anonyymi</b>
                         {" • "}
-                        <Link to={`#${thread.number}`}>
-                            {`No. ${thread.number}`}
-                        </Link>
+                        <Link to={`#${thread.id}`}>{`No. ${thread.id}`}</Link>
                         {" • "}
 
                         <PopupButton
@@ -92,7 +90,7 @@ export default function Thread({
                 <div
                     className="sm:mb-0 w-full sm:max-w-[96%] border-2 border-purple-200 sm:border-none bg-white sm:bg-transparent"
                     ref={
-                        opPost.number === highlightedMessage
+                        opPost.id === highlightedMessage
                             ? highlightedRef
                             : undefined
                     }
@@ -140,14 +138,14 @@ export default function Thread({
                 <React.Fragment key={reply1.id}>
                     <div
                         className={`mb-1 sm:mb-0 overflow-hidden border-2 ${
-                            reply1.number === highlightedMessage
+                            reply1.id === highlightedMessage
                                 ? "border-purple-500"
                                 : "border-purple-200"
                         } bg-white p-1 block sm:inline-block w-full sm:w-auto sm:max-w-[96%] break-words`}
                         key={reply1.id}
                         id={`${reply1.id}`}
                         ref={(ref) => {
-                            if (reply1.number === highlightedMessage) {
+                            if (reply1.id === highlightedMessage) {
                                 highlightedRef.current = ref;
 
                                 setHighlightedRefReady(true);

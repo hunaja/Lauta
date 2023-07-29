@@ -20,8 +20,7 @@ export interface PostFile {
 }
 
 export interface Post {
-    id: string;
-    number: number;
+    id: number;
     text: string;
     author?: string;
     file?: PostFile;
@@ -31,8 +30,7 @@ export interface Post {
 }
 
 export interface Thread {
-    id: string;
-    number: number;
+    id: number;
     board: string;
     title: string;
     fileReplyCount: number;

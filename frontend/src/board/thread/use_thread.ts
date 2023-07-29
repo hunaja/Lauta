@@ -24,8 +24,7 @@ export default function useThread(
             ? `/api/boards/${board.path}/threads/${threadNumber}?preview=${preview}`
             : null,
         board && threadNumber
-            ? async () =>
-                  threadsService.getThreadByNumber(threadNumber, preview)
+            ? async () => threadsService.getThread(threadNumber, preview)
             : null,
         {
             refreshInterval: 10000,

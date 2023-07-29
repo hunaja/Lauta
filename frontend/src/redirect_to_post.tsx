@@ -26,10 +26,7 @@ export default function RedirectToPost() {
     const board = boards.find((b) => b.id === post?.thread.board);
 
     return board && post ? (
-        <Navigate
-            to={`/${board?.path}/${post.thread.number}#${post.number}`}
-            replace
-        />
+        <Navigate to={`/${board?.path}/${post.thread.id}#${post.id}`} replace />
     ) : (
         <NotFoundPage />
     );

@@ -1,4 +1,4 @@
-import { Session, UserRole } from "../types.js";
+import { Session } from "../types.js";
 
 export default function isSession(s: unknown): s is Session {
     return (
@@ -8,6 +8,6 @@ export default function isSession(s: unknown): s is Session {
         typeof s.id === "string" &&
         "role" in s &&
         typeof s.role === "string" &&
-        Object.values(UserRole).includes(s.role as UserRole)
+        ["ADMIN", "MODERATOR", "JANNY"].includes(s.role)
     );
 }

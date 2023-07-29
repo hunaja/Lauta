@@ -71,7 +71,7 @@ export default function PopupButton({
 
                         {isAdmin && (
                             <>
-                                {(!post || thread.number === post.number) && (
+                                {(!post || thread.id === post.id) && (
                                     <li>
                                         <button
                                             onClick={() => {
@@ -123,3 +123,10 @@ export default function PopupButton({
         </>
     );
 }
+
+PopupButton.defaultProps = {
+    deleteThread: undefined,
+    deletePost: undefined,
+    deleteFile: undefined,
+    post: undefined,
+};

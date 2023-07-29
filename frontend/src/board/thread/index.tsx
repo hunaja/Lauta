@@ -30,9 +30,6 @@ export default function ThreadPage() {
         remove,
     } = useThread(board, threadNumber);
 
-    console.log("Board: ", board);
-    console.log("Thread: ", thread);
-
     if (!board || !threadNumber) return null;
 
     if (error) {
@@ -55,7 +52,7 @@ export default function ThreadPage() {
         }
     };
 
-    const title = thread.title || `Lanka #${thread.number}`;
+    const title = thread.title || `Lanka #${thread.id}`;
     const pageTitle = `/${board.path}/ - ${title}`;
 
     return (

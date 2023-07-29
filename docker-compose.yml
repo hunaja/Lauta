@@ -9,8 +9,6 @@ services:
         environment:
             - BACKEND_URL=http://backend:${PORT}
             - MINIO_URL=http://minio:9000
-        networks:
-            - lauta_network
         depends_on:
             - backend
             - minio
@@ -22,42 +20,37 @@ services:
             - "${PORT}:${PORT}"
         environment:
             - PORT=${PORT}
-            - MONGODB_URI=mongodb://mongo:27017
+            - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASWORD}@localhost/${POSTGRES_DATABASE}
             - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
             - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
             - MINIO_HOST=minio
             - JWT_SECRET=${JWT_SECRET}
-        networks:
-            - lauta_network
         depends_on:
             - minio
-            - mongo
+            - database
 
     minio:
         image: minio/minio
         ports:
             - "9000:9000"
         volumes:
-            - lauta_minio:/data
+            - minio:/data
         environment:
             - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
             - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-        networks:
-            - lauta_network
         command: server /data
 
-    mongo:
-        image: mongo
+    database:
+        image: postgres
         ports:
-            - 27017:27017
+            - 5432:5432
         volumes:
-            - lauta_database:/data/db
-        networks:
-            - lauta_network
-
-networks:
-    lauta_network:
+            - database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
 volumes:
-    lauta_minio: {}
-    lauta_database: {}
+    minio: {}
+    database: {}

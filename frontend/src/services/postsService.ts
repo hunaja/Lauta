@@ -11,10 +11,8 @@ const deletePost = async (jwtToken: string, post: Post) => {
     });
 };
 
-const getPostByNumber = async (postNumber: number) => {
-    const response = await axios.get<PostPreview>(
-        `${baseUrl}/number/${postNumber}`
-    );
+const getPost = async (postNumber: number) => {
+    const response = await axios.get<PostPreview>(`${baseUrl}/${postNumber}`);
     return response.data;
 };
 
@@ -28,7 +26,7 @@ const deletePostFile = async (jwtToken: string, post: Post) => {
 
 const postsService = {
     deletePost,
-    getPostByNumber,
+    getPost,
     deletePostFile,
 };
 

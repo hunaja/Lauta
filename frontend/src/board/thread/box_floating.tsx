@@ -7,7 +7,7 @@ import formatPost from "../format_post";
 import useTimeAgo from "../use_time_ago";
 
 interface Props {
-    thread: Pick<Thread, "number" | "title">;
+    thread: Pick<Thread, "id" | "title">;
     post: Post;
 }
 
@@ -23,7 +23,7 @@ export default function PostBoxFloating({ thread, post }: Props) {
         return "text-purple-300";
     };
 
-    const isOp = thread?.number === post.number;
+    const isOp = thread?.id === post.id;
 
     const imageUrl = `/files/lauta-thumbnails/${post.id}.png`;
 
@@ -34,7 +34,7 @@ export default function PostBoxFloating({ thread, post }: Props) {
                     {post.author ?? "Anonyymi"}
                 </b>
                 {" • "}
-                <Link to={`#${post.number}`}>{`No. ${post.number}`}</Link>
+                <Link to={`#${post.id}`}>{`No. ${post.id}`}</Link>
                 {" • "}
                 <time>{timeAgo}</time>
 

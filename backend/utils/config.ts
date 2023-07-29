@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-import { UserRole } from "../types.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -12,9 +11,10 @@ export default {
     jwtSecret: process.env.JWT_SECRET!,
     hashRounds: 10,
     defaultUser: {
+        email: "root@root.com",
         username: "root",
         password: "root",
-        role: UserRole.ADMIN,
+        role: "ADMIN",
     },
 
     minioHost: process.env.MINIO_HOST ?? "localhost",
@@ -27,5 +27,5 @@ export default {
     catalogPageSize: 16,
     maxFileSize: 5 * 1024 * 1024,
 
-    allowedMimeTypes: ["image/jpeg", "image/gif", "image/png"],
+    allowedMimeTypes: ["image/jpeg", "image/gif", "image/png", "image/webp"],
 };

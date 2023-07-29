@@ -11,13 +11,17 @@ services:
             MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
             MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
         command: server /data
-    mongo:
-        image: mongo
+    database:
+        image: postgres
         ports:
-            - 27017:27017
+            - 5432:5432
         volumes:
-            - mongo:/data/db
+            - database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
 volumes:
     minio: {}
-    mongo: {}
+    database: {}

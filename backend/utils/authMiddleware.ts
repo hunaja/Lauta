@@ -2,10 +2,10 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
 import config from "./config.js";
-import { UserRole } from "../types.js";
 import isSession from "./isSession.js";
 import assertNever from "./assertNever.js";
 import AuthRequiredError from "../errors/AuthRequiredError.js";
+import { UserRole } from "@prisma/client";
 
 export const extractToken = (
     req: Request,
@@ -40,15 +40,15 @@ const requireMinRole0 =
 
         switch (role) {
             case UserRole.ADMIN:
-                if (req.session.role !== UserRole.ADMIN)
+                if (req.session.role !== "ADMIN")
                     throw new AuthRequiredError(
                         "Sinun täytyy olla ylläpitäjä tehdäksesi tämän."
                     );
                 break;
             case UserRole.MODERATOR:
                 if (
-                    req.session.role !== UserRole.ADMIN &&
-                    req.session.role !== UserRole.MODERATOR
+                    req.session.role !== "ADMIN" &&
+                    req.session.role !== "MODERATOR"
                 )
                     throw new AuthRequiredError(
                         "Sinun täytyy olla vähintään moderaattori tehdäksesi tämän."
@@ -56,9 +56,9 @@ const requireMinRole0 =
                 break;
             case UserRole.TRAINEE:
                 if (
-                    req.session.role !== UserRole.ADMIN &&
-                    req.session.role !== UserRole.MODERATOR &&
-                    req.session.role !== UserRole.TRAINEE
+                    req.session.role !== "ADMIN" &&
+                    req.session.role !== "MODERATOR" &&
+                    req.session.role !== "TRAINEE"
                 )
                     throw new AuthRequiredError(
                         "Sinun täytyy olla vähintään jannu tehdäksesi tämän."

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
-import mongoose from "mongoose";
 
 import InsufficientPermissionsError from "../errors/InsufficentPermissionsError.js";
 import NotFoundError from "../errors/NotFoundError.js";
@@ -16,15 +15,7 @@ export default function errorHandler(
     response: Response,
     next: NextFunction
 ) {
-    if (error instanceof mongoose.Error.ValidationError) {
-        return response.status(400).json({
-            error: error.message,
-        });
-    } else if (error instanceof mongoose.Error.CastError) {
-        return response.status(400).json({
-            error: "Malformatted id",
-        });
-    } else if (error instanceof TokenExpiredError) {
+    if (error instanceof TokenExpiredError) {
         return response.status(400).json({
             error: "Session expired",
         });

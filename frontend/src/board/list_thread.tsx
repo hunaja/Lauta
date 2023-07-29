@@ -19,7 +19,7 @@ export default function ThreadListThread({
         deletePostFile,
         // error,
         // remove,
-    } = useThread(board, initialThread.number, opened, {
+    } = useThread(board, initialThread.id, opened, {
         fallbackData: initialThread,
         revalidateOnMount: false,
     });

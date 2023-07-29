@@ -7,9 +7,13 @@
         "dev": "NODE_env=development nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader @swc-node/register/esm' index.ts",
         "build": "tsc"
     },
+    "prisma": {
+        "seed": "node --experimental-specifier-resolution=node --loader @swc-node/register/esm ./prisma/seed.ts"
+    },
     "author": "",
     "license": "MIT",
     "dependencies": {
+        "@prisma/client": "^5.0.0",
         "bcrypt": "^5.1.0",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
@@ -18,12 +22,10 @@
         "file-type": "^18.0.0",
         "jsonwebtoken": "^8.5.1",
         "minio": "^7.1.1",
-        "mongoose": "^6.7.2",
-        "mongoose-sequence": "^5.3.1",
-        "mongoose-unique-validator": "^3.1.0",
         "multer": "^1.4.5-lts.1",
         "sharp": "^0.32.1",
-        "winston": "^3.8.2"
+        "winston": "^3.8.2",
+        "zod": "^3.21.4"
     },
     "devDependencies": {
         "@babel/eslint-parser": "^7.19.1",
@@ -41,6 +43,7 @@
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-import": "^2.26.0",
         "nodemon": "^2.0.20",
+        "prisma": "^5.0.0",
         "typescript": "^5.1.6",
         "vitest": "^0.32.0"
     },

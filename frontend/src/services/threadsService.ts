@@ -6,9 +6,9 @@ const getAll = async () => {
     return response.data;
 };
 
-const getThreadByNumber = async (number: number, preview: boolean) => {
+const getThread = async (id: number, preview: boolean) => {
     const response = await axios.get<Thread>(
-        `/api/threads/number/${number}?preview=${preview}`
+        `/api/threads/${id}?preview=${preview}`
     );
     return response.data;
 };
@@ -42,7 +42,7 @@ const remove = async (jwtToken: string, thread: Thread) => {
 
 const threadsService = {
     getAll,
-    getThreadByNumber,
+    getThread,
     remove,
     reply,
 };
